@@ -3,7 +3,7 @@ import { LoggerModule } from 'nestjs-pino'; // Asegúrate de importar el módulo
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { XmlGeneratorController } from './xml-generator/xml-generator.controller';
-import { XmlService } from './xml-generator/xml.service';
+import { XmlService } from './xml-generator/xmlAirAvail.service';
 
 @Module({
   imports: [    LoggerModule.forRoot(), ],

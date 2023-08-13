@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { XmlService } from './xml.service';
+import { XmlService } from './xmlAirAvail.service';
 
 @Controller('xml-generator')
 export class XmlGeneratorController {
