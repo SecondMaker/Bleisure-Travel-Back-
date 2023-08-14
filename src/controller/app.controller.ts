@@ -1,6 +1,6 @@
 // app.controller.ts
 import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
-import { XmlService } from '../services/xmlAirAvail.service';
+import { XmlService } from '../services/airAvail/xmlAirAvail.service';
 import { NoFlightsAvailableException } from '../filters/execption/no-flights-available.exception'
 
 @Controller()
@@ -20,7 +20,7 @@ export class AppController {
         fecha,
         origen,
         destino,
-        cant: cant, // Asegúrate de usar la misma nomenclatura de propiedades
+        cant: cant, 
       });
 
       return this.formatJsonResponse(jsonResponse) ;

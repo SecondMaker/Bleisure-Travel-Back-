@@ -1,16 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { parseString } from 'xml2js';
+import { SharedService } from '../shared/shared.service';
 
 
 @Injectable()
 export class XmlService {
-  constructor(private readonly logger: Logger) {}
+  constructor(private readonly logger: Logger, private sharedService: SharedService) {}
   async generateAndSendXml(travelData: any): Promise<string> {
-    // Generar el XML según los datos recibidos
-    const xml = this.generateXml(travelData).trim();
-    const user = 'BLEISURETRAVEL'; // Coloca esto en un archivo .env
-    const password = 'na5!Z3Ew0bmId9oz'; // Coloca esto en un archivo .env
+    const user = this.sharedService.getUser();
+    const password = this.sharedService.getPassword();
+    const agentSine = this.sharedService.getAgentSine();
+    const terminalID = this.sharedService.getTerminalID();
+    const target = this.sharedService.getTarget();
+    const ISOCountry = this.sharedService.getISOCountry();
+    const xml = this.generateXml(travelData, agentSine, terminalID, target, ISOCountry).trim();
 
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -30,13 +34,13 @@ export class XmlService {
     }
   }
 
-   generateXml(travelData: any): string {
-
+   generateXml(travelData: any, AgentSine: string, TerminalID: string, Target: string, ISOCountry: string): string {
+    
      const xml = `
         <?xml version="1.0" encoding="UTF-8"?>
-        <KIU_AirAvailRQ EchoToken="1" TimeStamp="2023-08-04T19:20:43+00:00" Target="Testing" Version="3.0" SequenceNmbr="1" PrimaryLangID="en-us" DirectFlightsOnly="false" MaxResponses="10" CombinedItineraries="false">
+        <KIU_AirAvailRQ EchoToken="1" TimeStamp="2023-08-04T19:20:43+00:00" Target="${Target}" Version="3.0" SequenceNmbr="1" PrimaryLangID="en-us" DirectFlightsOnly="false" MaxResponses="10" CombinedItineraries="false">
          <POS>
-            <Source AgentSine="MIAS90307" TerminalID="MIAS903008" ISOCountry="US" /> 
+            <Source AgentSine="${AgentSine}"  TerminalID="${TerminalID}" ISOCountry="${ISOCountry}" /> 
          </POS>
          <SpecificFlightInfo>   
          </SpecificFlightInfo>
@@ -55,7 +59,6 @@ export class XmlService {
          </TravelerInfoSummary>
         </KIU_AirAvailRQ>
         `;
-
     return xml;
    }
   
