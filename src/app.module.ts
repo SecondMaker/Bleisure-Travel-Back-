@@ -1,13 +1,21 @@
 import { Module, Logger } from '@nestjs/common';
 import { LoggerModule } from 'nestjs-pino'; // Asegúrate de importar el módulo de registro LoggerModule
-import { AppController } from './app.controller';
+import { AppController } from './controller/app.controller';
 import { AppService } from './app.service';
-import { XmlGeneratorController } from './xml-generator/xml-generator.controller';
-import { XmlService } from './xml-generator/xmlAirAvail.service';
+import { XmlService } from './services/xmlAirAvail.service';
+import { APP_FILTER } from '@nestjs/core';
+import { CustomExceptionFilter } from './filters/execption/execption.filter';
+import { NoFlightsAvailableException } from './filters/execption/no-flights-available.exception';
 
 @Module({
   imports: [    LoggerModule.forRoot(), ],
-  controllers: [AppController, XmlGeneratorController],
-  providers: [AppService, XmlService, Logger],
+  controllers: [AppController],
+  providers: [AppService, XmlService, Logger,
+    {
+      provide: APP_FILTER,
+      useClass: CustomExceptionFilter,
+    },
+    NoFlightsAvailableException,
+  ],
 })
 export class AppModule {}

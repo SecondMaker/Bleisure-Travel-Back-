@@ -1,6 +1,7 @@
 // app.controller.ts
-import { Controller, Post, Body } from '@nestjs/common';
-import { XmlService } from './xml-generator/xmlAirAvail.service';
+import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { XmlService } from '../services/xmlAirAvail.service';
+import { NoFlightsAvailableException } from '../filters/execption/no-flights-available.exception'
 
 @Controller()
 export class AppController {
@@ -13,19 +14,33 @@ export class AppController {
     @Body('destino') destino: string,
     @Body('cant') cant: number,
   ): Promise<any> {
-    // Llama al servicio XmlService para generar y enviar el XML
-    const jsonResponse = await this.xmlService.generateAndSendXml({
-      fecha,
-      origen,
-      destino,
-      cant: cant, // Asegúrate de usar la misma nomenclatura de propiedades
-    });
-    return this.formatJsonResponse(jsonResponse);
+    try {
+      // Llama al servicio XmlService para generar y enviar el XML
+      const jsonResponse = await this.xmlService.generateAndSendXml({
+        fecha,
+        origen,
+        destino,
+        cant: cant, // Asegúrate de usar la misma nomenclatura de propiedades
+      });
+
+      return this.formatJsonResponse(jsonResponse) ;
+    } catch (error) {
+      if (error instanceof NoFlightsAvailableException) {
+        throw new HttpException('No flights available for this route', HttpStatus.NOT_FOUND);
+      } else {
+        throw new HttpException('Error al procesar la solicitud', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
   }
 
   formatJsonResponse(jsonResponse: any): any {
     const originDestInfo = jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0];
+    if (!originDestInfo.OriginDestinationOptions[0] || !Array.isArray(originDestInfo.OriginDestinationOptions[0].OriginDestinationOption)) {
+       console.log("go to execption..")
+      throw new NoFlightsAvailableException();
+    }
     const originDestOptions = originDestInfo.OriginDestinationOptions[0].OriginDestinationOption;
+
     const flightSegments = originDestOptions.map((option) => {
       const flightSegment = option.FlightSegment[0];
 
@@ -44,7 +59,7 @@ export class AppController {
         BookingClassAvail : this.formatBookingClassAvail(flightSegment.BookingClassAvail)
       };
 
-      return formattedFlightSegment; // ;
+      return formattedFlightSegment;
     });
 
     const formattedResponse = {
