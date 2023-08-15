@@ -1,8 +1,10 @@
 import { Module, Logger } from '@nestjs/common';
 import { LoggerModule } from 'nestjs-pino'; // Asegúrate de importar el módulo de registro LoggerModule
 import { AppController } from './controller/app.controller';
+import { PriceController } from './controller/price/price.controller'
 import { AppService } from './app.service';
-import { XmlService } from './services/airAvail/xmlAirAvail.service';
+import { XmlService } from './services/air-avail/xmlAirAvail.service';
+import { AirPriceService } from './services/air-price/air-price.service'
 import { APP_FILTER } from '@nestjs/core';
 import { CustomExceptionFilter } from './filters/execption/execption.filter';
 import { NoFlightsAvailableException } from './filters/execption/no-flights-available.exception';
@@ -18,10 +20,11 @@ import { ConfigModule } from '@nestjs/config';
     }),
     CustomConfigModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, PriceController],
   providers: [
     AppService,
     XmlService,
+    AirPriceService,
     Logger,
     SharedService,
     {

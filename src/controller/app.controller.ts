@@ -1,7 +1,13 @@
 // app.controller.ts
-import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
-import { XmlService } from '../services/airAvail/xmlAirAvail.service';
-import { NoFlightsAvailableException } from '../filters/execption/no-flights-available.exception'
+import {
+  Controller,
+  Post,
+  Body,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import { XmlService } from '../services/air-avail/xmlAirAvail.service';
+import { NoFlightsAvailableException } from '../filters/execption/no-flights-available.exception';
 
 @Controller()
 export class AppController {
@@ -20,26 +26,41 @@ export class AppController {
         fecha,
         origen,
         destino,
-        cant: cant, 
+        cant: cant,
       });
 
-      return this.formatJsonResponse(jsonResponse) ;
+      return this.formatJsonResponse(jsonResponse);
     } catch (error) {
       if (error instanceof NoFlightsAvailableException) {
-        throw new HttpException('No flights available for this route', HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          'No flights available for this route',
+          HttpStatus.NOT_FOUND,
+        );
       } else {
-        throw new HttpException('Error al procesar la solicitud', HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException(
+          'Error al procesar la solicitud',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     }
   }
 
+ 
+  
   formatJsonResponse(jsonResponse: any): any {
-    const originDestInfo = jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0];
-    if (!originDestInfo.OriginDestinationOptions[0] || !Array.isArray(originDestInfo.OriginDestinationOptions[0].OriginDestinationOption)) {
-       console.log("go to execption..")
+    const originDestInfo =
+      jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0];
+    if (
+      !originDestInfo.OriginDestinationOptions[0] ||
+      !Array.isArray(
+        originDestInfo.OriginDestinationOptions[0].OriginDestinationOption,
+      )
+    ) {
+      console.log('go to execption..');
       throw new NoFlightsAvailableException();
     }
-    const originDestOptions = originDestInfo.OriginDestinationOptions[0].OriginDestinationOption;
+    const originDestOptions =
+      originDestInfo.OriginDestinationOptions[0].OriginDestinationOption;
 
     const flightSegments = originDestOptions.map((option) => {
       const flightSegment = option.FlightSegment[0];
@@ -56,9 +77,17 @@ export class AppController {
         MarketingAirline: flightSegment.MarketingAirline[0].$.CompanyShortName,
         Meal: flightSegment.Meal[0].$.MealCode,
         MarketingCabin: this.formatMarketingCabin(flightSegment.MarketingCabin),
-        BookingClassAvail : this.formatBookingClassAvail(flightSegment.BookingClassAvail)
+        BookingClassAvail: this.formatBookingClassAvail(
+          flightSegment.BookingClassAvail,
+          flightSegment.$.FlightNumbe,
+          flightSegment.$.DepartureDateTime,
+          flightSegment.$.ArrivalDateTime,
+          flightSegment.MarketingAirline[0].$.CompanyShortName,
+          flightSegment.DepartureAirport[0].$.LocationCode,
+          flightSegment.ArrivalAirport[0].$.LocationCode,
+        ),
       };
-
+      
       return formattedFlightSegment;
     });
 
@@ -83,15 +112,26 @@ export class AppController {
     return MarketingCabinFormatted;
   }
 
-  formatBookingClassAvail(BookingClassAvail: any) {
+  formatBookingClassAvail(
+    BookingClassAvail: any,
+    FlightN: string,
+    Dtime: string,
+    Atime: string,
+    Airlinecode: string,
+    Dairport: string,
+    AairPort: string,
+  ) {
     let BookingClassAvailFormatted = BookingClassAvail.map((classAvail) => {
+
       return {
         ResBookDesigCode: classAvail.$.ResBookDesigCode,
         ResBookDesigQuantity: classAvail.$.ResBookDesigQuantity,
-        RPH : classAvail.$.RPH
-     }
-    })
-    
-    return BookingClassAvailFormatted
- }
+        RPH: classAvail.$.RPH,
+      };
+    });
+
+    return BookingClassAvailFormatted;
+  }
+
+
 }
