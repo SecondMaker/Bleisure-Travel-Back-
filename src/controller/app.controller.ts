@@ -7,11 +7,13 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { XmlService } from '../services/air-avail/xmlAirAvail.service';
+import { PriceList } from 'src/interface/price-list/price-list.interface';
 import { NoFlightsAvailableException } from '../filters/execption/no-flights-available.exception';
+import { FlightService } from '../services/flight/flight.service'
 
 @Controller()
 export class AppController {
-  constructor(private readonly xmlService: XmlService) {}
+  constructor(private readonly xmlService: XmlService, private readonly flightService: FlightService  ) {}
 
   @Post('search')
   async receiveData(
@@ -29,7 +31,7 @@ export class AppController {
         cant: cant,
       });
 
-      return this.formatJsonResponse(jsonResponse);
+      return this.validateResponse(jsonResponse);
     } catch (error) {
       if (error instanceof NoFlightsAvailableException) {
         throw new HttpException(
@@ -45,9 +47,7 @@ export class AppController {
     }
   }
 
- 
-  
-  formatJsonResponse(jsonResponse: any): any {
+  validateResponse(jsonResponse: any): any {
     const originDestInfo =
       jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0];
     if (
@@ -58,80 +58,18 @@ export class AppController {
     ) {
       console.log('go to execption..');
       throw new NoFlightsAvailableException();
-    }
-    const originDestOptions =
-      originDestInfo.OriginDestinationOptions[0].OriginDestinationOption;
+    } else {
+      ///go serviceesss
+      const originDestOptions =
+        jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0]
+          .OriginDestinationOptions[0].OriginDestinationOption;
 
-    const flightSegments = originDestOptions.map((option) => {
-      const flightSegment = option.FlightSegment[0];
-
-      let formattedFlightSegment = {
-        DepartureDateTime: flightSegment.$.DepartureDateTime,
-        ArrivalDateTime: flightSegment.$.ArrivalDateTime,
-        StopQuantity: flightSegment.$.StopQuantity,
-        FlightNumber: flightSegment.$.FlightNumber,
-        JourneyDuration: flightSegment.$.JourneyDuration,
-        DepartureAirport: flightSegment.DepartureAirport[0].$.LocationCode,
-        ArrivalAirport: flightSegment.ArrivalAirport[0].$.LocationCode,
-        Equipment: flightSegment.Equipment[0].$.AirEquipType,
-        MarketingAirline: flightSegment.MarketingAirline[0].$.CompanyShortName,
-        Meal: flightSegment.Meal[0].$.MealCode,
-        MarketingCabin: this.formatMarketingCabin(flightSegment.MarketingCabin),
-        BookingClassAvail: this.formatBookingClassAvail(
-          flightSegment.BookingClassAvail,
-          flightSegment.$.FlightNumbe,
-          flightSegment.$.DepartureDateTime,
-          flightSegment.$.ArrivalDateTime,
-          flightSegment.MarketingAirline[0].$.CompanyShortName,
-          flightSegment.DepartureAirport[0].$.LocationCode,
-          flightSegment.ArrivalAirport[0].$.LocationCode,
-        ),
-      };
+      const formattedInfo =
+        this.flightService.formatBookingClassAvailAndFlightInfo(
+          originDestOptions,
+        );
       
-      return formattedFlightSegment;
-    });
-
-    const formattedResponse = {
-      DepartureDateTime: originDestInfo.DepartureDateTime[0],
-      OriginLocation: originDestInfo.OriginLocation[0],
-      DestinationLocation: originDestInfo.DestinationLocation[0],
-      FlightSegments: flightSegments,
-    };
-
-    return formattedResponse;
+      return formattedInfo
+    }
   }
-
-  formatMarketingCabin(MarketingCabin: any) {
-    let MarketingCabinFormatted = MarketingCabin.map((cabin) => {
-      return {
-        CabinType: cabin.$.CabinType,
-        RPH: cabin.$.RPH,
-      };
-    });
-
-    return MarketingCabinFormatted;
-  }
-
-  formatBookingClassAvail(
-    BookingClassAvail: any,
-    FlightN: string,
-    Dtime: string,
-    Atime: string,
-    Airlinecode: string,
-    Dairport: string,
-    AairPort: string,
-  ) {
-    let BookingClassAvailFormatted = BookingClassAvail.map((classAvail) => {
-
-      return {
-        ResBookDesigCode: classAvail.$.ResBookDesigCode,
-        ResBookDesigQuantity: classAvail.$.ResBookDesigQuantity,
-        RPH: classAvail.$.RPH,
-      };
-    });
-
-    return BookingClassAvailFormatted;
-  }
-
-
 }

@@ -4,11 +4,12 @@ import { AppController } from './controller/app.controller';
 import { PriceController } from './controller/price/price.controller'
 import { AppService } from './app.service';
 import { XmlService } from './services/air-avail/xmlAirAvail.service';
-import { AirPriceService } from './services/air-price/air-price.service'
+import { AirPriceService } from './services/air-price/air-price.service';
+import { SharedService } from './services/shared/shared.service';
+import { FlightService } from './services/flight/flight.service';
 import { APP_FILTER } from '@nestjs/core';
 import { CustomExceptionFilter } from './filters/execption/execption.filter';
 import { NoFlightsAvailableException } from './filters/execption/no-flights-available.exception';
-import { SharedService } from './services/shared/shared.service';
 import { CustomConfigModule } from './config.module';
 import { ConfigModule } from '@nestjs/config';
 
@@ -25,6 +26,7 @@ import { ConfigModule } from '@nestjs/config';
     AppService,
     XmlService,
     AirPriceService,
+    FlightService,
     Logger,
     SharedService,
     {
