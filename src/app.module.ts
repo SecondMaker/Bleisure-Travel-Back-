@@ -1,7 +1,8 @@
 import { Module, Logger } from '@nestjs/common';
 import { LoggerModule } from 'nestjs-pino'; // Asegúrate de importar el módulo de registro LoggerModule
 import { AppController } from './controller/app.controller';
-import { PriceController } from './controller/price/price.controller'
+import { PriceController } from './controller/price/price.controller';
+import { ItinerariesController } from './controller/itineraries/itineraries.controller';
 import { AppService } from './app.service';
 import { XmlService } from './services/air-avail/xmlAirAvail.service';
 import { AirPriceService } from './services/air-price/air-price.service';
@@ -21,7 +22,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     CustomConfigModule,
   ],
-  controllers: [AppController, PriceController],
+  controllers: [AppController, PriceController, ItinerariesController],
   providers: [
     AppService,
     XmlService,

@@ -12,20 +12,41 @@ export class PriceController {
       // Llama al servicio AirPriceService para obtener el precio del vuelo
       const price = await this.airPriceService.generateAndSendXml(flightData);
 
-      return   this.formatPriceResponse( price );
+      return this.formatPriceResponse(price);
     } catch (error) {
       // Maneja el error según tus necesidades
       return { error: 'Error al obtener el precio del vuelo' };
     }
   }
-    
-    formatPriceResponse(response: any) {
-        const AirItineraryPricingInfo = response.KIU_AirPriceRS.PricedItineraries[0].PricedItinerary[0].AirItineraryPricingInfo[0]
+  extractTaxInfo(data: any): { TaxCode: string; Amount: string }[] {
+    return data.map((tax: any) => {
+      return {
+        TaxCode: tax.$.TaxCode,
+        Amount: tax.$.Amount,
+      };
+    });
+  }
+  formatPriceResponse(response: any) {
+    let fareSegment = {};
+    if (response.KIU_AirPriceRS.Error) {
+      fareSegment = {
+        error: response.KIU_AirPriceRS.Error[0].ErrorMsg[0],
+      };
+    } else {
+      const AirItineraryPricingInfo =
+        response.KIU_AirPriceRS.PricedItineraries[0].PricedItinerary[0]
+          .AirItineraryPricingInfo[0];
 
-        let fareSegment = {
-            baseFare: AirItineraryPricingInfo.ItinTotalFare[0].BaseFare[0].$.Amount,
-            totalFare : AirItineraryPricingInfo.ItinTotalFare[0].TotalFare[0].$.Amount
-        }
-        return fareSegment
+      fareSegment = {
+        baseFare: AirItineraryPricingInfo.ItinTotalFare[0].BaseFare[0].$.Amount,
+        totalFare:
+          AirItineraryPricingInfo.ItinTotalFare[0].TotalFare[0].$.Amount,
+        taxes: this.extractTaxInfo(
+          AirItineraryPricingInfo.ItinTotalFare[0].Taxes[0].Tax,
+        ),
+      };
     }
+
+    return fareSegment;
+  }
 }

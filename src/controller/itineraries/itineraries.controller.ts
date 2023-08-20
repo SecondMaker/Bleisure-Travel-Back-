@@ -6,16 +6,18 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { XmlService } from '../services/air-avail/xmlAirAvail.service';
-//import { PriceList } from 'src/interface/price-list/price-list.interface';
-import { NoFlightsAvailableException } from '../filters/execption/no-flights-available.exception';
-import { FlightService } from '../services/flight/flight.service'
+import { XmlService } from '../../services/air-avail/xmlAirAvail.service';
+import { NoFlightsAvailableException } from '../../filters/execption/no-flights-available.exception';
+import { FlightService } from '../../services/flight/flight.service';
 
 @Controller()
-export class AppController {
-  constructor(private readonly xmlService: XmlService, private readonly flightService: FlightService  ) {}
+export class ItinerariesController {
+  constructor(
+    private readonly xmlService: XmlService,
+    private readonly flightService: FlightService,
+  ) {}
 
-  @Post('search')
+  @Post('getItineraries')
   async receiveData(
     @Body('fecha') fecha: string,
     @Body('origen') origen: string,
@@ -56,7 +58,6 @@ export class AppController {
         originDestInfo.OriginDestinationOptions[0].OriginDestinationOption,
       )
     ) {
-      console.log('go to execption..');
       throw new NoFlightsAvailableException();
     } else {
       ///go serviceesss
@@ -65,12 +66,9 @@ export class AppController {
           .OriginDestinationOptions[0].OriginDestinationOption;
 
       const formattedInfo =
-        this.flightService.formatBookingClassAvailAndFlightInfo(
-          originDestOptions,
-          PassengerQuantity
-        );
-      
-      return formattedInfo
+        this.flightService.formatItinerariesResponse(originDestOptions);
+
+      return formattedInfo;
     }
   }
 }

@@ -6,7 +6,7 @@ import { SharedService } from '../shared/shared.service';
 @Injectable()
 export class AirPriceService {
     constructor(private readonly logger: Logger, private sharedService: SharedService) { }
-    async generateAndSendXml(flightData: any): Promise<string> {
+   async generateAndSendXml(flightData: any): Promise<string> {
         const user = this.sharedService.getUser();
         const password = this.sharedService.getPassword();
         const agentSine = this.sharedService.getAgentSine();
