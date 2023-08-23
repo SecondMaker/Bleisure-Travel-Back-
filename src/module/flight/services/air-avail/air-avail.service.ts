@@ -1,12 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import axios from 'axios';
-import { parseString } from 'xml2js';
 import { SharedService } from '../shared/shared.service';
-
-
+import { ParseToJsonService } from '../parse-to-json/parse-to-json.service'
 @Injectable()
-export class XmlService {
-  constructor(private readonly logger: Logger, private sharedService: SharedService) {}
+export class AirAvailService {
+  constructor( private sharedService: SharedService, private parseToJson: ParseToJsonService) {}
   async generateAndSendXml(travelData: any): Promise<string> {
     const user = this.sharedService.getUser();
     const password = this.sharedService.getPassword();
@@ -26,8 +24,7 @@ export class XmlService {
 
     try {
       const response = await axios.post('https://ssl00.kiusys.com/ws3/index.php', data.toString(), { headers });
-      // Convierte la respuesta XML en formato JSON
-      const jsonResponse = await this.parseXmlToJson(response.data);
+      const jsonResponse = await this.parseToJson.parseXmlToJson(response.data);
       return  jsonResponse 
     } catch (error) {
       throw new Error('Error al enviar la solicitud al servicio web');
@@ -61,17 +58,4 @@ export class XmlService {
         `;
     return xml;
    }
-  
-   async parseXmlToJson(xml: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      parseString(xml, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
-    });
-   }
-  
 }

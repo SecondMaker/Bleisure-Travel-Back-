@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
-import { XmlService } from '../services/xmlAirAvail.service';
+import { XmlService } from '../services/air-avail/air-avail.service';
 
 describe('AppController', () => {
   let appController: AppController;

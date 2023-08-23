@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { XmlService } from './xmlAirAvail.service';
+import { XmlService } from './air-avail.service';
 
 describe('XmlService', () => {
   let service: XmlService;

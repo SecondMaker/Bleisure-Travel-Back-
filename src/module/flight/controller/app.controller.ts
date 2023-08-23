@@ -6,14 +6,14 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { XmlService } from '../services/air-avail/xmlAirAvail.service';
-//import { PriceList } from 'src/interface/price-list/price-list.interface';
-import { NoFlightsAvailableException } from '../filters/execption/no-flights-available.exception';
+import { AirAvailService } from '../services/air-avail/air-avail.service';
+
+import { NoFlightsAvailableException } from '../../../filters/execption/no-flights-available.exception';
 import { FlightService } from '../services/flight/flight.service'
 
 @Controller()
 export class AppController {
-  constructor(private readonly xmlService: XmlService, private readonly flightService: FlightService  ) {}
+  constructor(private readonly airAvailService: AirAvailService, private readonly flightService: FlightService  ) {}
 
   @Post('search')
   async receiveData(
@@ -23,8 +23,8 @@ export class AppController {
     @Body('cant') cant: number,
   ): Promise<any> {
     try {
-      // Llama al servicio XmlService para generar y enviar el XML
-      const jsonResponse = await this.xmlService.generateAndSendXml({
+      // Llama al servicio airAvailService para generar y enviar el XML
+      const jsonResponse = await this.airAvailService.generateAndSendXml({
         fecha,
         origen,
         destino,

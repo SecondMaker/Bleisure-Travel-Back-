@@ -6,14 +6,14 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { XmlService } from '../../services/air-avail/xmlAirAvail.service';
-import { NoFlightsAvailableException } from '../../filters/execption/no-flights-available.exception';
+import { AirAvailService } from '../../services/air-avail/air-avail.service';
+import { NoFlightsAvailableException } from '../../../../filters/execption/no-flights-available.exception';
 import { FlightService } from '../../services/flight/flight.service';
 
 @Controller()
 export class ItinerariesController {
   constructor(
-    private readonly xmlService: XmlService,
+    private readonly airAvailService: AirAvailService,
     private readonly flightService: FlightService,
   ) {}
 
@@ -26,7 +26,7 @@ export class ItinerariesController {
   ): Promise<any> {
     try {
       // Llama al servicio XmlService para generar y enviar el XML
-      const jsonResponse = await this.xmlService.generateAndSendXml({
+      const jsonResponse = await this.airAvailService.generateAndSendXml({
         fecha,
         origen,
         destino,
