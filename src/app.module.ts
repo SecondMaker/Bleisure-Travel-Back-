@@ -5,7 +5,8 @@ import { APP_FILTER } from '@nestjs/core';
 import { CustomExceptionFilter } from './filters/execption/execption.filter';
 import { NoFlightsAvailableException } from './filters/execption/no-flights-available.exception';
 import { CustomConfigModule } from './config.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RedisModule } from './redis-config/redis-config.module';
 
 @Module({
   imports: [
@@ -14,9 +15,9 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
     }),
     CustomConfigModule,
-    FlightModule
+    FlightModule,
+    RedisModule
   ],
-  
   providers: [
     Logger,
     {
