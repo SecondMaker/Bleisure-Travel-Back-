@@ -1,7 +1,7 @@
-import { ExecptionFilter } from './execption.filter';
+import { CustomExceptionFilter } from './execption.filter';
 
 describe('ExecptionFilter', () => {
   it('should be defined', () => {
-    expect(new ExecptionFilter()).toBeDefined();
+    expect(new CustomExceptionFilter()).toBeDefined();
   });
 });

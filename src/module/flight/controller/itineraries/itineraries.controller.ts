@@ -25,7 +25,6 @@ export class ItinerariesController {
     @Body('cant') cant: number,
   ): Promise<any> {
     try {
-      // Llama al servicio XmlService para generar y enviar el XML
       const jsonResponse = await this.airAvailService.generateAndSendXml({
         fecha,
         origen,
@@ -60,7 +59,6 @@ export class ItinerariesController {
     ) {
       throw new NoFlightsAvailableException();
     } else {
-      ///go serviceesss
       const originDestOptions =
         jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0]
           .OriginDestinationOptions[0].OriginDestinationOption;

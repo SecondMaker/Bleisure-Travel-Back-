@@ -11,7 +11,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         return new Redis({
           host: configService.get<string>('REDIS_HOST'),
           port: configService.get<number>('REDIS_PORT'),
-          // Agrega otras opciones de configuración según tus necesidades
         });
       },
       inject: [ConfigService],

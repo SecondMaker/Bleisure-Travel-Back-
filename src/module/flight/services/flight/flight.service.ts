@@ -7,9 +7,7 @@ export class FlightService {
   constructor(private readonly airPriceService: AirPriceService) {}
 
   formatItinerariesResponse(originDestOptions: any) {
-
     const flightSegments = originDestOptions.map((option) => {
-      
       const flightSegment = option.FlightSegment[0];
       let formattedFlightSegment = {
         DepartureDateTime: flightSegment.$.DepartureDateTime,
@@ -25,12 +23,6 @@ export class FlightService {
         MarketingCabin: this.formatMarketingCabin(flightSegment.MarketingCabin),
         BookingClassAvail: this.formatBookingClassAvail(
           flightSegment.BookingClassAvail,
-          flightSegment.$.FlightNumbe,
-          flightSegment.$.DepartureDateTime,
-          flightSegment.$.ArrivalDateTime,
-          flightSegment.MarketingAirline[0].$.CompanyShortName,
-          flightSegment.DepartureAirport[0].$.LocationCode,
-          flightSegment.ArrivalAirport[0].$.LocationCode,
         ),
       };
 
@@ -40,15 +32,7 @@ export class FlightService {
     return flightSegments;
   }
 
-  formatBookingClassAvail(
-    BookingClassAvail: any,
-    FlightN: string,
-    Dtime: string,
-    Atime: string,
-    Airlinecode: string,
-    Dairport: string,
-    AairPort: string,
-  ) {
+  formatBookingClassAvail(BookingClassAvail: any) {
     let BookingClassAvailFormatted = BookingClassAvail.map((classAvail) => {
       return {
         ResBookDesigCode: classAvail.$.ResBookDesigCode,
@@ -70,13 +54,13 @@ export class FlightService {
 
     return MarketingCabinFormatted;
   }
-  
+
   async formatBookingClassAvailAndFlightInfo(
     originDestOptions: any[],
-    PassengerQuantity: number
+    PassengerQuantity: number,
   ): Promise<any[]> {
     const formattedInfo = [];
-  
+
     for (const originDestOption of originDestOptions) {
       const flightSegment = originDestOption.FlightSegment[0];
       const bookingClassAvail = flightSegment.BookingClassAvail;
@@ -94,13 +78,14 @@ export class FlightService {
           ResBookDesigQuantity: classAvail.$.ResBookDesigQuantity,
           PassengerQuantity: PassengerQuantity,
         };
-  
+
         const airPriceResponse = await this.airPriceService.generateAndSendXml(
           flightData,
         );
-  
-        const formattedPriceResponse = this.formatPriceResponse(airPriceResponse);
-  
+
+        const formattedPriceResponse =
+          this.formatPriceResponse(airPriceResponse);
+
         if (!formattedPriceResponse.hasOwnProperty('error')) {
           formattedInfo.push({
             ...flightData,
@@ -109,7 +94,7 @@ export class FlightService {
         }
       }
     }
-  
+
     return formattedInfo;
   }
   formatPriceResponse(response: any) {
