@@ -11,13 +11,14 @@ import { SharedService } from './services/shared/shared.service';
 
 import { ConfigModule } from '@nestjs/config';
 import { TestRedisController } from './test-redis/test-redis.controller';
+import { BatchController } from './batch/batch.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     RedisModule, // Asegúrate de importar el RedisModule aquí
   ],
-  controllers: [AppController, PriceController, ItinerariesController, TestRedisController],
+  controllers: [AppController, PriceController, ItinerariesController, TestRedisController, BatchController],
   providers: [
     AirAvailService,
     AirPriceService,
