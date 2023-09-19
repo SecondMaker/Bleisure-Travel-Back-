@@ -1,58 +1,45 @@
-// app.controller.ts
-import {
-    Controller,
-    Post,
-    Body,
-    HttpException,
-    HttpStatus,
-    Inject,
-  } from '@nestjs/common';
-  import { AirAvailService } from '../services/air-avail/air-avail.service';
-  import { Redis } from 'ioredis';
-  import { NoFlightsAvailableException } from '../../../filters/execption/no-flights-available.exception';
-  import { FlightService } from '../services/flight/flight.service'; // Asegúrate de importar el servicio RedisService
-
+import { Controller, Get, Query } from '@nestjs/common';
+import { AirAvailService } from '../services/air-avail/air-avail.service';
+import { NoFlightsAvailableException } from '../../../filters/execption/no-flights-available.exception';
+import { FlightService } from '../services/flight/flight.service';
 @Controller('batch')
 export class BatchController {
-  constructor(
-    @Inject('REDIS_CONNECTION') private readonly redisClient: Redis,
-    private readonly flightService: FlightService,
-    private readonly airAvailService: AirAvailService,
-  ) {}
+  constructor(private readonly airAvailService: AirAvailService, private readonly flightService: FlightService) {}
 
-  @Post('load-data')
-  async loadData(
-    @Body('origen') origen: string,
-    @Body('destino') destino: string,
-  ): Promise<void> {
-    const startDate = new Date('2023-08-30');
-    const endDate = new Date('2023-09-30');
-    //const oneDay = 24 * 60 * 60 * 1000; // Milisegundos en un día
-    
-    for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
-      const fecha = currentDate.toISOString().slice(0, 10); // Formato yyyy-mm-dd
-      
-      const key = `${fecha}-${origen}-${destino}`;
-      const existingData = await this.redisClient.get(key);
-    
-      if (!existingData) {
-        const jsonResponse = await this.airAvailService.generateAndSendXml({
-          fecha,
-          origen,
-          destino,
-          cant: 1, // Cantidad de pasajeros
-        });
-    
-        const formattedInfo = await this.validateResponse(jsonResponse, 1);
-    
-        await this.redisClient.set(key, JSON.stringify(formattedInfo));
+  @Get('search')
+  async searchAvailability(
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+    @Query('origin') origin: string,
+    @Query('destination') destination: string,
+  ): Promise<any[]> {
+    const results = [];
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    // Iterate through each day in the date range
+    for (let currentDate = start; currentDate <= end; currentDate.setDate(currentDate.getDate() + 1)) {
+      const travelData = {
+        fecha: currentDate.toISOString().slice(0, 10), // Formato yyyy-mm-dd
+        origen: origin,
+        destino: destination,
+        cant: 1, // Cantidad de pasajeros
+      };
+
+      try {
+        const jsonResponse = await this.airAvailService.generateAndSendXml(travelData);
+        results.push(this.validateResponse(jsonResponse));
+      } catch (error) {
+        // Handle errors as needed
+        results.push(`Error fetching data for ${travelData.fecha}: ${error.message}`);
+        continue; // Continuar con la siguiente iteración del bucle
       }
     }
+    return results;
   }
-  async validateResponse(
-    jsonResponse: any,
-    PassengerQuantity: number,
-  ): Promise<any> {
+
+  validateResponse(jsonResponse: any): any {
     const originDestInfo =
       jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0];
     if (
@@ -61,19 +48,14 @@ export class BatchController {
         originDestInfo.OriginDestinationOptions[0].OriginDestinationOption,
       )
     ) {
-      console.log('go to execption..');
-      throw new NoFlightsAvailableException();
+      return jsonResponse
     } else {
-      ///go serviceesss
       const originDestOptions =
         jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0]
           .OriginDestinationOptions[0].OriginDestinationOption;
 
       const formattedInfo =
-        this.flightService.formatBookingClassAvailAndFlightInfo(
-          originDestOptions,
-          PassengerQuantity,
-        );
+        this.flightService.formatItinerariesResponse(originDestOptions);
 
       return formattedInfo;
     }

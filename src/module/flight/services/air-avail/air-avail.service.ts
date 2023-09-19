@@ -12,6 +12,7 @@ export class AirAvailService {
     const terminalID = this.sharedService.getTerminalID();
     const target = this.sharedService.getTarget();
     const ISOCountry = this.sharedService.getISOCountry();
+    //console.log("air-avail param::",user, password, agentSine, terminalID, target, ISOCountry)
     const xml = this.generateXml(travelData, agentSine, terminalID, target, ISOCountry).trim();
 
     const headers = {

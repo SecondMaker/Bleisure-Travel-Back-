@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY package.json ./
 RUN npm install --frozen-lockfile
+RUN npm install --no-cache
 
 # Etapa de construcción
 FROM node:18-alpine as builder
@@ -12,6 +13,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules .node_modules
 
 COPY . .
+
 RUN npm install 
 RUN npm run build
 

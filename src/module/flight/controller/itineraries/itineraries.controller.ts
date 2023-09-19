@@ -32,7 +32,7 @@ export class ItinerariesController {
         cant: cant,
       });
 
-      return this.validateResponse(jsonResponse, cant);
+      return this.validateResponse(jsonResponse);
     } catch (error) {
       if (error instanceof NoFlightsAvailableException) {
         throw new HttpException(
@@ -48,25 +48,30 @@ export class ItinerariesController {
     }
   }
 
-  validateResponse(jsonResponse: any, PassengerQuantity: number): any {
-    const originDestInfo =
-      jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0];
-    if (
-      !originDestInfo.OriginDestinationOptions[0] ||
-      !Array.isArray(
-        originDestInfo.OriginDestinationOptions[0].OriginDestinationOption,
-      )
-    ) {
-      throw new NoFlightsAvailableException();
+  validateResponse(jsonResponse: any): any {
+    console.log(jsonResponse)
+    if (jsonResponse.Root || jsonResponse.KIU_AirAvailRS.Error) {
+      return jsonResponse;
     } else {
-      const originDestOptions =
-        jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0]
-          .OriginDestinationOptions[0].OriginDestinationOption;
+      const originDestInfo =
+        jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0];
+      if (
+        !originDestInfo.OriginDestinationOptions[0] ||
+        !Array.isArray(
+          originDestInfo.OriginDestinationOptions[0].OriginDestinationOption,
+        )
+      ) {
+        throw new NoFlightsAvailableException();
+      } else {
+        const originDestOptions =
+          jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0]
+            .OriginDestinationOptions[0].OriginDestinationOption;
 
-      const formattedInfo =
-        this.flightService.formatItinerariesResponse(originDestOptions);
+        const formattedInfo =
+          this.flightService.formatItinerariesResponse(originDestOptions);
 
-      return formattedInfo;
+        return formattedInfo;
+      }
     }
   }
 }

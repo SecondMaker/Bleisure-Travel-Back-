@@ -1,15 +1,11 @@
 version: '3'
 services:
-  redis:
-    image: redis:latest
-    container_name: mi-redis-container
+  nest:
+    build:
+      context: .  # La ruta al directorio donde se encuentra tu Dockerfile
+      dockerfile: Dockerfile  # El nombre de tu Dockerfile
     ports:
-      - '6379:6379' # Mapeo del puerto del contenedor Redis al puerto del host
-
-  nestjs-app:
-    build: . # Ruta al Dockerfile
-    ports:
-      - '3030:3030' # Mapeo del puerto del contenedor NestJS al puerto del host
+      - '8080:8080' # Mapeo del puerto del contenedor NestJS al puerto del host
     environment:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
@@ -19,5 +15,6 @@ services:
       TERMINAL_ID: ${TERMINAL_ID}
       TARGET: ${TARGET}
       ISOCOUNTRY: ${ISOCOUNTRY}
-    depends_on:
-      - redis
+      PROD: ${PROD}
+      REDISS_STRING: ${REDISS_STRING}
+
