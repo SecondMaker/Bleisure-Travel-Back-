@@ -1,8 +1,8 @@
 // app.controller.ts
 import {
   Controller,
-  Post,
-  Body,
+  Get,
+  Query,
   HttpException,
   HttpStatus,
   Inject,
@@ -21,18 +21,20 @@ export class AppController {
     private readonly flightService: FlightService,
   ) {}
 
-  @Post('search')
+  @Get('search')
   async receiveData(
-    @Body('fecha') fecha: string,
-    @Body('origen') origen: string,
-    @Body('destino') destino: string,
-    @Body('cant') cant: number,
+    @Query('fecha') fecha: string,
+    @Query('origen') origen: string,
+    @Query('destino') destino: string,
+    @Query('cant') cant: number,
   ): Promise<any> {
+    const useRedis = process.env.USE_REDIS === 'true';
+    console.log("use redis",useRedis)
     try {
       const key = `${fecha}-${origen}-${destino}`;
-      const existingData = await this.redisClient.get(key);
+      const existingData =  await this.redisClient.get(key);
 
-      if (existingData) {
+      if (existingData && useRedis) {
         // Si la clave ya existe, devuelve los datos existentes
         return JSON.parse(existingData);
       } else {
@@ -45,8 +47,8 @@ export class AppController {
         });
 
         const formattedInfo = await this.validateResponse(jsonResponse, cant);
-
-        await this.redisClient.set(key, JSON.stringify(formattedInfo));
+        if (useRedis) await this.redisClient.set(key, JSON.stringify(formattedInfo));
+        
         return formattedInfo;
       }
     } catch (error) {
@@ -63,7 +65,6 @@ export class AppController {
       }
     }
   }
-
   async validateResponse(
     jsonResponse: any,
     PassengerQuantity: number,

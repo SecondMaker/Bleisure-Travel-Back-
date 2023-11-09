@@ -5,15 +5,14 @@ import { ParseToJsonService } from '../parse-to-json/parse-to-json.service'
 @Injectable()
 export class destinationService {
   constructor( private sharedService: SharedService, private parseToJson: ParseToJsonService) {}
-  async generateAndSendXml(): Promise<string> {
+  async generateAndSendXml(airLine: string): Promise<string> {
     const user = this.sharedService.getUser();
     const password = this.sharedService.getPassword();
     const agentSine = this.sharedService.getAgentSine();
     const terminalID = this.sharedService.getTerminalID();
     const target = this.sharedService.getTarget();
     const ISOCountry = this.sharedService.getISOCountry();
-    //console.log("air-avail param::",user, password, agentSine, terminalID, target, ISOCountry)
-    const xml = this.generateXml(agentSine, terminalID, target, ISOCountry).trim();
+    const xml = this.generateXml(airLine, agentSine, terminalID, target, ISOCountry).trim();
 
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -26,13 +25,13 @@ export class destinationService {
     try {
       const response = await axios.post('https://ssl00.kiusys.com/ws3/index.php', data.toString(), { headers });
       const jsonResponse = await this.parseToJson.parseXmlToJson(response.data);
-      return  jsonResponse 
+      return  jsonResponse
     } catch (error) {
       throw new Error('Error al enviar la solicitud al servicio web');
     }
   }
 
-   generateXml(AgentSine: string, TerminalID: string, Target: string, ISOCountry: string): string {
+   generateXml(airLine: string, AgentSine: string, TerminalID: string, Target: string, ISOCountry: string): string {
     
      const xml = `
          <?xml version="1.0" encoding="UTF-8"?>
@@ -41,7 +40,7 @@ export class destinationService {
                <Source AgentSine="${AgentSine}" TerminalID="${TerminalID}" ISOCountry="${ISOCountry}" ISOCurrency="USD">
                </Source>
          </POS> 
-            <RequestedCarrier> <CarrierCode>XX</CarrierCode>
+            <RequestedCarrier> <CarrierCode>${airLine}</CarrierCode>
              </RequestedCarrier>
          </KIU_GetOriginDestinationInfoRQ>
         `;

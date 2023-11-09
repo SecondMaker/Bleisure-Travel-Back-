@@ -9,7 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       provide: 'REDIS_CONNECTION',
       useFactory: (configService: ConfigService) => {
         if (configService.get<string>('PROD')) {
-          console.log('on production!..');
+          console.log('on production!');
           const redisUrl = configService.get<string>('REDISS_STRING');
           const redis = new Redis(redisUrl);
           return redis;

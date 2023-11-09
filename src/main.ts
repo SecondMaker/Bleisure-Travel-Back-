@@ -8,15 +8,15 @@ require('dotenv').config();
 
 async function bootstrap() {
   const server = express();
+  const allowedOrigins = ['http://localhost:3000', 'http://137.184.247.54', 'https://squid-app-84uyu.ondigitalocean.app'];
   const app = await NestFactory.create(
     AppModule,
     new ExpressAdapter(server)
   );
-
   // Agrega esta línea para habilitar CORS
     // Agrega esta línea para habilitar CORS
     app.use(cors({
-      origin: 'http://localhost:3000', // Cambia esto al dominio correcto de tu frontend
+      origin: allowedOrigins, // Cambia esto al dominio correcto de tu frontend
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
     }));

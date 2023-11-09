@@ -31,7 +31,6 @@ export class FlightService {
 
     return flightSegments;
   }
-
   formatBookingClassAvail(BookingClassAvail: any) {
     let BookingClassAvailFormatted = BookingClassAvail.map((classAvail) => {
       return {
@@ -43,7 +42,6 @@ export class FlightService {
 
     return BookingClassAvailFormatted;
   }
-
   formatMarketingCabin(MarketingCabin: any) {
     let MarketingCabinFormatted = MarketingCabin.map((cabin) => {
       return {
@@ -54,49 +52,60 @@ export class FlightService {
 
     return MarketingCabinFormatted;
   }
-
   async formatBookingClassAvailAndFlightInfo(
     originDestOptions: any[],
     PassengerQuantity: number,
   ): Promise<any[]> {
     const formattedInfo = [];
-
+  
     for (const originDestOption of originDestOptions) {
-      const flightSegment = originDestOption.FlightSegment[0];
-      const bookingClassAvail = flightSegment.BookingClassAvail;
-
-      for (const classAvail of bookingClassAvail) {
+      for (const flightSegment of originDestOption.FlightSegment) {
+        const bookingClassAvail = flightSegment.BookingClassAvail;
+  
         const flightData = {
           FlightNumber: flightSegment.$.FlightNumber,
           DepartureDateTime: flightSegment.$.DepartureDateTime,
           ArrivalDateTime: flightSegment.$.ArrivalDateTime,
-          MarketingAirline:
-            flightSegment.MarketingAirline[0].$.CompanyShortName,
+          JourneyDuration: flightSegment.$.JourneyDuration,
+          MarketingAirline: flightSegment.MarketingAirline[0].$.CompanyShortName,
           DepartureAirport: flightSegment.DepartureAirport[0].$.LocationCode,
           ArrivalAirport: flightSegment.ArrivalAirport[0].$.LocationCode,
-          ResBookDesigCode: classAvail.$.ResBookDesigCode,
-          ResBookDesigQuantity: classAvail.$.ResBookDesigQuantity,
-          PassengerQuantity: PassengerQuantity,
         };
-
-        const airPriceResponse = await this.airPriceService.generateAndSendXml(
-          flightData,
-        );
-
-        const formattedPriceResponse =
-          this.formatPriceResponse(airPriceResponse);
-
-        if (!formattedPriceResponse.hasOwnProperty('error')) {
-          formattedInfo.push({
+  
+        const flightInfo = {
+          ...flightData,
+          Prices: [],
+        };
+  
+        for (const classAvail of bookingClassAvail) {
+          const priceData = {
+            ResBookDesigCode: classAvail.$.ResBookDesigCode,
+            ResBookDesigQuantity: classAvail.$.ResBookDesigQuantity,
+            PassengerQuantity: PassengerQuantity,
+            AirPriceResponse: {}, // Añadir un objeto vacío si no se tiene información
+          };
+  
+          const airPriceResponse = await this.airPriceService.generateAndSendXml({
             ...flightData,
-            AirPriceResponse: formattedPriceResponse,
+            ...priceData,
           });
+  
+          const formattedPriceResponse = this.formatPriceResponse(airPriceResponse);
+  
+          if (!formattedPriceResponse.hasOwnProperty('error')) {
+            priceData.AirPriceResponse = formattedPriceResponse;
+            flightInfo.Prices.push(priceData);
+          }
         }
+  
+        formattedInfo.push(flightInfo);
       }
     }
-
+  
     return formattedInfo;
   }
+  
+  
   formatPriceResponse(response: any) {
     let fareSegment = {};
     if (response.KIU_AirPriceRS.Error) {
@@ -115,5 +124,37 @@ export class FlightService {
       };
     }
     return fareSegment;
+  }
+  async formatFlightFromDestinations(destinationsList: any[]): Promise<any[]> {    const formattedFlights = destinationsList.map((destination) => {
+      const departureInfo = destination.DepartureInformation[0];
+      const arrivalInfo = destination.ArrivalInformation[0];
+  
+      const departureCountry = departureInfo.Country[0];
+      const departureCountryName = departureInfo.CountryName[0];
+      const departureLocationName = departureInfo.LocationName[0];
+      const departureLocationCity = departureInfo.LocationCode[0]._;
+      
+      const arrivalCountry = arrivalInfo.Country[0];
+      const arrivalCountryName = arrivalInfo.CountryName[0];
+      const arrivalLocationName = arrivalInfo.LocationName[0];
+      const arrivalLocationCity = arrivalInfo.LocationCode[0]._;
+
+      const flightId= departureInfo.LocationCode[0]._+arrivalInfo.LocationCode[0]._
+  
+      return {
+        flightId: flightId,
+        DepartureCountryName: departureCountryName,  
+        DepartureCountry: departureCountry,
+        DepartureLocationName: departureLocationName,
+        IATAdestination: departureLocationCity,
+
+        ArrivalCountryName: arrivalCountryName,
+        ArrivalCountry: arrivalCountry,
+        ArrivalLocationName: arrivalLocationName,
+        IATAarrival: arrivalLocationCity,
+      };
+    });
+    
+    return formattedFlights;
   }
 }

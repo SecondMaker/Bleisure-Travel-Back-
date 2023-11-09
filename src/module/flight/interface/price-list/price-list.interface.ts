@@ -10,3 +10,4 @@ export interface PriceList {
     CompanyShortName: string,
     TotalFare : number
 }
+
