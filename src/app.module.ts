@@ -1,5 +1,6 @@
 import { Module, Logger } from '@nestjs/common';
-import { FlightModule } from './module/flight/flight.module'; 
+import { FlightModule } from './module/flight/flight.module';
+import { AuthModule } from './module/flight/controller/auth/auth.module';  
 import { LoggerModule } from 'nestjs-pino';
 import { APP_FILTER } from '@nestjs/core';
 import { CustomExceptionFilter } from './filters/execption/execption.filter';
@@ -7,6 +8,8 @@ import { NoFlightsAvailableException } from './filters/execption/no-flights-avai
 import { CustomConfigModule } from './config.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from './redis-config/redis-config.module';
+
+
 
 @Module({
   imports: [
@@ -16,6 +19,7 @@ import { RedisModule } from './redis-config/redis-config.module';
     }),
     CustomConfigModule,
     FlightModule,
+    AuthModule,
     RedisModule
   ],
   providers: [
@@ -26,5 +30,6 @@ import { RedisModule } from './redis-config/redis-config.module';
     },
     NoFlightsAvailableException,
   ],
+  controllers: [],
 })
 export class AppModule {}
