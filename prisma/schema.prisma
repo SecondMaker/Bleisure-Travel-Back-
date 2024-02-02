@@ -25,5 +25,4 @@ model Permisos {
 
 model Info_clientes {
   id Int @id @default(autoincrement())
-
 }
