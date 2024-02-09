@@ -12,7 +12,6 @@ export class AirAvailService {
     const terminalID = this.sharedService.getTerminalID();
     const target = this.sharedService.getTarget();
     const ISOCountry = this.sharedService.getISOCountry();
-    //console.log("air-avail param::",user, password, agentSine, terminalID, target, ISOCountry)
     const xml = this.generateXml(travelData, agentSine, terminalID, target, ISOCountry).trim();
 
     const headers = {
@@ -33,7 +32,9 @@ export class AirAvailService {
   }
 
    generateXml(travelData: any, AgentSine: string, TerminalID: string, Target: string, ISOCountry: string): string {
-    
+      
+     
+     
      const xml = `
         <?xml version="1.0" encoding="UTF-8"?>
         <KIU_AirAvailRQ EchoToken="1" TimeStamp="2023-08-04T19:20:43+00:00" Target="${Target}" Version="3.0" SequenceNmbr="1" PrimaryLangID="en-us" DirectFlightsOnly="false" MaxResponses="10" CombinedItineraries="false">
@@ -52,7 +53,9 @@ export class AirAvailService {
          </TravelPreferences>
          <TravelerInfoSummary>
             <AirTravelerAvail>
-               <PassengerTypeQuantity Code="ADT" Quantity="${travelData.cant}" />
+            ${travelData.adt ? `<PassengerTypeQuantity Code="ADT" Quantity="${travelData.adt}" />` : ''}
+            ${travelData.chd && travelData.chd > 0 ? `<PassengerTypeQuantity Code="CHD" Quantity="${travelData.chd}" />` : ''}
+            ${travelData.inf && travelData.inf > 0 ? `<PassengerTypeQuantity Code="INF" Quantity="${travelData.inf}" />` : ''}
             </AirTravelerAvail>
          </TravelerInfoSummary>
         </KIU_AirAvailRQ>
