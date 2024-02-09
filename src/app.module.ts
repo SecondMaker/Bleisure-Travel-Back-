@@ -16,7 +16,7 @@ import { RedisModule } from './redis-config/redis-config.module';
     }),
     CustomConfigModule,
     FlightModule,
-    RedisModule
+    //RedisModule
   ],
   providers: [
     Logger,
