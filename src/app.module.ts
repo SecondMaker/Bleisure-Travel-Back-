@@ -8,6 +8,7 @@ import { NoFlightsAvailableException } from './filters/execption/no-flights-avai
 import { CustomConfigModule } from './config.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from './redis-config/redis-config.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 
 
@@ -20,7 +21,8 @@ import { RedisModule } from './redis-config/redis-config.module';
     CustomConfigModule,
     FlightModule,
     AuthModule,
-    RedisModule
+    RedisModule,
+    PrismaModule
   ],
   providers: [
     Logger,

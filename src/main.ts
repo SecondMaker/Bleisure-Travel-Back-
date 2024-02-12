@@ -4,6 +4,7 @@ import { CustomExceptionFilter } from './filters/execption/execption.filter';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import * as express from 'express';
 import * as cors from 'cors'; // Importa el módulo cors
+import { ValidationPipe } from '@nestjs/common';
 require('dotenv').config();
 
 async function bootstrap() {
@@ -21,6 +22,11 @@ async function bootstrap() {
       credentials: true,
     }));
   app.useGlobalFilters(new CustomExceptionFilter());
+  app.useGlobalPipes(new ValidationPipe
+    ({
+      whitelist: true,
+    }),
+    );
   await app.listen(8090);
 }
 bootstrap();
