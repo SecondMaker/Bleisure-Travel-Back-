@@ -1,12 +1,12 @@
 version: '3'
 services:
-  dev-bleisure:
-    image: mysql:8.0
+  #dev-bleisure:
+    #image: mysql:8.0
     ports:
-        - 3305:3306
+        #- 3305:3306
     environment:
-        MYSQL_ROOT_PASSWORD: root
-        MYSQL_DATABASE: bleisure
+        #MYSQL_ROOT_PASSWORD: root
+        #MYSQL_DATABASE: bleisure
   nest:
     build:
       context: .  # La ruta al directorio donde se encuentra tu Dockerfile
