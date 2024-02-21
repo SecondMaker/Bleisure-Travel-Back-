@@ -25,4 +25,7 @@ model Permisos {
 
 model Info_clientes {
   id Int @id @default(autoincrement())
+  Name String
+  Type String
+  User_Id Int
 }
