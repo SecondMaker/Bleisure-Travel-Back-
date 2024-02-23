@@ -32,10 +32,31 @@ export class AuthServices {
         }
         
     }
-
-    signin() {
+    
+    async signin(dto: AuthDto) {
         //Buscar el usuario
-        //Si el usuario no existe
-        return 'I am sign In';
+        const user = this.prisma.user.findUnique({
+            where : {
+                email : dto.email,
+            },
+        });
+        //Si el usuario no existe arrojar excepcion
+        if(!user)
+            throw new ForbiddenException(
+                'Usuario incorrecto',
+        );
+        //Verificacion contraseñas
+        const pwMatches = await argon.verify(
+            (await user).hash,
+            dto.password, 
+        ); 
+        //Si la contraseña no es correcta
+        if(!pwMatches)
+        throw new ForbiddenException(
+            'Usuario incorrecto',
+        );
+        //Devolvemos un dato (Usuario en este caso)
+        delete (await user).hash;
+        return user;
     }
-}
+} 
