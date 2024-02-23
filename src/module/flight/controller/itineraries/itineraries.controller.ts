@@ -23,6 +23,9 @@ export class ItinerariesController {
     @Body('origen') origen: string,
     @Body('destino') destino: string,
     @Body('cant') cant: number,
+    @Body('ADT') adt: number,
+    @Body('CHD') chd: number,
+    @Body('INF') inf: number,
   ): Promise<any> {
     try {
       const jsonResponse = await this.airAvailService.generateAndSendXml({
@@ -30,9 +33,14 @@ export class ItinerariesController {
         origen,
         destino,
         cant: cant,
+        adt: adt,
+        chd: chd,
+        inf: inf
+
       });
 
-      return this.validateResponse(jsonResponse);
+      //return this.validateResponse(jsonResponse);
+      return jsonResponse
     } catch (error) {
       if (error instanceof NoFlightsAvailableException) {
         throw new HttpException(
@@ -49,7 +57,6 @@ export class ItinerariesController {
   }
 
   validateResponse(jsonResponse: any): any {
-    console.log(jsonResponse)
     if (jsonResponse.Root || jsonResponse.KIU_AirAvailRS.Error) {
       return jsonResponse;
     } else {

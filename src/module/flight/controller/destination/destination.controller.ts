@@ -26,7 +26,7 @@ import { Redis } from 'ioredis';
 @Controller('destinations')
 export class DestinationController {
   constructor(
-    @Inject('REDIS_CONNECTION') private readonly redisClient: Redis,
+   // @Inject('REDIS_CONNECTION') private readonly redisClient: Redis,
     private readonly destinationService: destinationService,
     private readonly flightService: FlightService,
   ) {}
@@ -34,7 +34,7 @@ export class DestinationController {
   @Get()
   async getAllRoutes(): Promise<any> {
     const key = 'list-destinations';
-    const existingData = await this.redisClient.get(key);
+    const existingData = false//await this.redisClient.get(key);
 
     if (existingData) {
       return JSON.stringify(existingData);

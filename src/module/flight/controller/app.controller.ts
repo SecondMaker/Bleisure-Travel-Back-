@@ -16,7 +16,7 @@ import { FlightService } from '../services/flight/flight.service';
 @Controller()
 export class AppController {
   constructor(
-    @Inject('REDIS_CONNECTION') private readonly redisClient: Redis,
+   // @Inject('REDIS_CONNECTION') private readonly redisClient: Redis,
     private readonly airAvailService: AirAvailService,
     private readonly flightService: FlightService,
   ) {}
@@ -27,12 +27,15 @@ export class AppController {
     @Query('origen') origen: string,
     @Query('destino') destino: string,
     @Query('cant') cant: number,
+    @Query('ADT') adt: number,
+    @Query('CHD') chd: number,
+    @Query('INF') inf: number,
   ): Promise<any> {
     const useRedis = process.env.USE_REDIS === 'true';
-    console.log("use redis",useRedis)
+    
     try {
       const key = `${fecha}-${origen}-${destino}`;
-      const existingData =  await this.redisClient.get(key);
+      const existingData =  false //await this.redisClient.get(key);
 
       if (existingData && useRedis) {
         // Si la clave ya existe, devuelve los datos existentes
@@ -44,10 +47,13 @@ export class AppController {
           origen,
           destino,
           cant: cant,
+          adt: adt,
+          chd: chd,
+          inf: inf
         });
 
-        const formattedInfo = await this.validateResponse(jsonResponse, cant);
-        if (useRedis) await this.redisClient.set(key, JSON.stringify(formattedInfo));
+        const formattedInfo = await this.validateResponse(jsonResponse, cant, adt, chd, inf);
+        //if (useRedis) await this.redisClient.set(key, JSON.stringify(formattedInfo));
         
         return formattedInfo;
       }
@@ -68,6 +74,9 @@ export class AppController {
   async validateResponse(
     jsonResponse: any,
     PassengerQuantity: number,
+    adt: number,
+    chd: number,
+    inf: number
   ): Promise<any> {
     const originDestInfo =
       jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0];
@@ -80,7 +89,6 @@ export class AppController {
       console.log('go to execption..');
       throw new NoFlightsAvailableException();
     } else {
-      ///go serviceesss
       const originDestOptions =
         jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0]
           .OriginDestinationOptions[0].OriginDestinationOption;
@@ -89,6 +97,7 @@ export class AppController {
         this.flightService.formatBookingClassAvailAndFlightInfo(
           originDestOptions,
           PassengerQuantity,
+          adt, chd, inf
         );
 
       return formattedInfo;

@@ -55,10 +55,15 @@ export class FlightService {
   async formatBookingClassAvailAndFlightInfo(
     originDestOptions: any[],
     PassengerQuantity: number,
+    adt: number,
+    chd: number,
+    inf: number
   ): Promise<any[]> {
     const formattedInfo = [];
   
     for (const originDestOption of originDestOptions) {
+      const flightsForOption = [];
+  
       for (const flightSegment of originDestOption.FlightSegment) {
         const bookingClassAvail = flightSegment.BookingClassAvail;
   
@@ -81,14 +86,17 @@ export class FlightService {
           const priceData = {
             ResBookDesigCode: classAvail.$.ResBookDesigCode,
             ResBookDesigQuantity: classAvail.$.ResBookDesigQuantity,
+            adt: adt,
+            chd: chd,
+            inf: inf,
+
             PassengerQuantity: PassengerQuantity,
             AirPriceResponse: {}, // Añadir un objeto vacío si no se tiene información
           };
   
           const airPriceResponse = await this.airPriceService.generateAndSendXml({
-            ...flightData,
-            ...priceData,
-          });
+            flightData
+          }, {priceData});
   
           const formattedPriceResponse = this.formatPriceResponse(airPriceResponse);
   
@@ -98,8 +106,10 @@ export class FlightService {
           }
         }
   
-        formattedInfo.push(flightInfo);
+        flightsForOption.push(flightInfo);
       }
+  
+      formattedInfo.push({flights: flightsForOption });
     }
   
     return formattedInfo;

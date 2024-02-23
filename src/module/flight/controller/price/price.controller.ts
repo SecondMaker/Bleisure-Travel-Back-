@@ -7,10 +7,10 @@ export class PriceController {
   constructor(private readonly airPriceService: AirPriceService) {}
 
   @Post('getPrice')
-  async getPrice(@Body() flightData: any): Promise<any> {
+  async getPrice(@Body() flightData: any, priceData: any): Promise<any> {
     try {
       // Llama al servicio AirPriceService para obtener el precio del vuelo
-      const price = await this.airPriceService.generateAndSendXml(flightData);
+      const price = await this.airPriceService.generateAndSendXml(flightData, priceData);
 
       return this.formatPriceResponse(price);
     } catch (error) {
