@@ -11,7 +11,7 @@ FROM node:18-alpine as builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules .node_modules
-
+COPY  /prisma ./
 COPY . .
 
 RUN npm install 
@@ -20,7 +20,7 @@ RUN npm run build
 # Etapa de ejecución
 FROM node:18-alpine as runner
 WORKDIR /app
-
+COPY  /prisma ./
 COPY package.json ./
 RUN npm install --prod
 COPY --from=builder /app/dist ./dist
