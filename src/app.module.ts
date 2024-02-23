@@ -7,7 +7,7 @@ import { CustomExceptionFilter } from './filters/execption/execption.filter';
 import { NoFlightsAvailableException } from './filters/execption/no-flights-available.exception';
 import { CustomConfigModule } from './config.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { RedisModule } from './redis-config/redis-config.module';
+//import { RedisModule } from './redis-config/redis-config.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 
@@ -21,7 +21,7 @@ import { PrismaModule } from './prisma/prisma.module';
     CustomConfigModule,
     FlightModule,
     AuthModule,
-    RedisModule,
+    //RedisModule,
     PrismaModule
   ],
   providers: [
