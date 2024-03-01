@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator"
+import { IsEmail, IsNotEmpty, IsString, IsInt} from "class-validator"
+import { IntegerType } from "typeorm"
 
 export class AuthDto {
     @IsEmail()
@@ -8,4 +9,19 @@ export class AuthDto {
     @IsString()
     @IsNotEmpty()
     password: string
+
+    @IsString()
+    @IsNotEmpty()
+    name: string
+
+    @IsString()
+    type: string
+
+    gender: string
+
+    @IsNotEmpty()
+    date_of_birth: string
+
+  /* @IsInt()
+    phone: string */
 }

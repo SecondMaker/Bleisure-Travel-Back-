@@ -24,6 +24,6 @@ export class AuthController{
         @Body() dto: AuthDto,
         ){
         return this.authService.signin(dto);
-        }
+    }
 
 }
