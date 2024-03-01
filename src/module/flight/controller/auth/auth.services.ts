@@ -7,6 +7,8 @@ import { isEmpty } from "class-validator";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { LoginDto } from "./dto/auth.dto";
+import { User } from "@prisma/client";
+import { type } from "os";
 
 @Injectable({})
 export class AuthServices {
@@ -23,7 +25,7 @@ export class AuthServices {
             const user = await this.prisma.user.create({
                 data : {
                     email: dto.email,
-                    hash,
+                    hash   
                 }
             });
             const info_clientes = await this.prisma.info_clientes.create({
@@ -31,13 +33,13 @@ export class AuthServices {
                     name: dto.name,
                     type: dto.type,
                     gender : dto.gender,
-                    date_of_birth: dto.date_of_birth
+                    date_of_birth: dto.date_of_birth,
+                    userId : user.id
                 }
             }) 
 
             //devolver respuesta
             return this.signToken(user.id, user.email);
-
         }catch(error){
             if(error instanceof PrismaClientKnownRequestError){
                 if(error.code == 'P2002'){
@@ -51,7 +53,7 @@ export class AuthServices {
     
     async signin(dto: LoginDto) {
         //Buscar el usuario
-        const user = this.prisma.user.findUnique({
+        const user = await this.prisma.user.findUnique({
             where : {
                 email : dto.email,
             },
@@ -67,22 +69,30 @@ export class AuthServices {
             dto.password, 
         ); 
         //Si la contraseña no es correcta
-        if(!pwMatches)
+        if(!pwMatches){
         throw new ForbiddenException(
             'Usuario incorrecto',
-        );
+        )};
+        
         //Devolvemos respuesta
         return this.signToken((await user).id, (await user).email);
     }
 
     async signToken(
         userId: number,
-        email: string
-    ): Promise <{access_token: string}> {
+        email: string,
+
+    ): Promise <{access_token: string, tipo: string}> {
         const payload = {
             sub: userId,
             email
         }
+
+        const type_user = await this.prisma.info_clientes.findUnique({
+            where : {
+                userId : userId,
+            },
+        });
 
         const secret =  this.config.get('JWT_SECRET')
 
@@ -92,6 +102,7 @@ export class AuthServices {
         });
 
         return {
+            tipo: type_user.type,
             access_token : token,
         }
     }
