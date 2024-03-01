@@ -2,6 +2,7 @@ import { Body, Controller, ParseIntPipe, Post, Req } from '@nestjs/common';
 import {AuthServices} from './auth.services';
 import { Request } from 'express';
 import { AuthDto } from './dto';
+import { LoginDto } from './dto/auth.dto';
 
 
 @Controller('auth')
@@ -21,7 +22,7 @@ export class AuthController{
     @Post('signin')
 
     signin(
-        @Body() dto: AuthDto,
+        @Body() dto: LoginDto,
         ){
         return this.authService.signin(dto);
     }
