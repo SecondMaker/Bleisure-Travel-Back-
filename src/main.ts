@@ -15,9 +15,8 @@ async function bootstrap() {
     new ExpressAdapter(server)
   );
   // Agrega esta línea para habilitar CORS
-    // Agrega esta línea para habilitar CORS
     app.use(cors({
-      origin: allowedOrigins, // Cambia esto al dominio correcto de tu frontend
+      origin: allowedOrigins,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
     }));
@@ -27,6 +26,6 @@ async function bootstrap() {
       whitelist: true,
     }),
     );
-  await app.listen(8090);
+  await app.listen(8080);
 }
 bootstrap();
