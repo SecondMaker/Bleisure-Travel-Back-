@@ -37,7 +37,6 @@ export class AuthServices {
                     userId : user.id
                 }
             }) 
-
             //devolver respuesta
             return this.signToken(user.id, user.email);
         }catch(error){

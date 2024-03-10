@@ -19,7 +19,7 @@ import { AirBookService } from './services/air-book/air-book.service';
 import { AirTicketService } from './services/air-ticket/air-ticket.service';
 import { AirPriceReservationService } from './services/air-price-reservation/air-price-reservation.service';
 //config
-import { RedisModule } from '../../redis-config/redis-config.module';
+//import { RedisModule } from '../../redis-config/redis-config.module';
 import { ConfigModule } from '@nestjs/config';
 
 import { TestRedisController } from './test-redis/test-redis.controller';
