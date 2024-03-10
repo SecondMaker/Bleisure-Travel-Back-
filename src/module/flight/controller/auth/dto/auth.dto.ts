@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString, IsInt} from "class-validator"
-import { IntegerType } from "typeorm"
+
 
 export class AuthDto {
     @IsEmail()

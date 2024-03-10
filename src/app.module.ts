@@ -9,6 +9,8 @@ import { CustomConfigModule } from './config.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 //import { RedisModule } from './redis-config/redis-config.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { UserController } from './module/flight/controller/user/user.controller';
+import { BookingModule } from './module/flight/controller/booking/booking.module';
 
 
 
@@ -21,6 +23,7 @@ import { PrismaModule } from './prisma/prisma.module';
     CustomConfigModule,
     FlightModule,
     AuthModule,
+    BookingModule,
     //RedisModule,
     PrismaModule
   ],
@@ -32,6 +35,6 @@ import { PrismaModule } from './prisma/prisma.module';
     },
     NoFlightsAvailableException,
   ],
-  controllers: [],
+  controllers: [UserController],
 })
 export class AppModule {}

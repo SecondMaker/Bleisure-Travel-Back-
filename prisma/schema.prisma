@@ -39,3 +39,10 @@ model Info_clientes {
   userId Int @unique
   user User @relation(fields:[userId], references: [id])
 }
+
+model Bookings {
+  id Int @id @default(autoincrement())
+  codigo_reserva String
+  status String 
+  email String
+}
