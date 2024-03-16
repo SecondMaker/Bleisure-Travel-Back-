@@ -57,7 +57,6 @@ export class BookController {
   @Post()
   async createBook(@Body() bookData: BookingData): Promise<any> {
     // Ahora puedes acceder a bookData.segmentFlight, bookData.passangers, y bookData.contact
-    
     const jsonResponse = await this.airBookService.generateAndSendXml(bookData);
     return jsonResponse;
   }

@@ -49,12 +49,7 @@ export class AirBookService {
         { headers },
       );
        const jsonResponse = await this.parseToJson.parseXmlToJson(response.data);
-       
-       const Data = {
-         json: jsonResponse,
-         req: xml
-       }
-      return jsonResponse
+       return jsonResponse
      } catch (error) {
        
       throw new Error('Error al enviar la solicitud al servicio web');
@@ -108,7 +103,7 @@ export class AirBookService {
           /\D/g,
           '',
           )}" AreaCityCode="424" PhoneNumber="${bookData.contact.contactNumber}"/>
-        <Email>juansala@gmail.com</Email>
+        <Email>${bookData.contact.contactEmail}</Email>
         <TravelerRefNumber RPH="1"/>
       </AirTraveler>
       `,

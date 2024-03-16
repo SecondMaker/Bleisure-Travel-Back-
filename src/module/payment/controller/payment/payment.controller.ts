@@ -1,31 +1,38 @@
-import { Injectable } from '@nestjs/common';
 import { Body, Controller, Post } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { BNCPaymentService } from '../../services/bnc.service'; // Importa el servicio
+import { PaymentData } from '../../model';
 
-@Injectable()
 @Controller('payments')
 export class PaymentNotificationController {
   constructor(
     @InjectQueue('payment-notifications') private readonly queue: Queue,
+    private readonly bncPaymentService: BNCPaymentService, // Inyecta el servicio
   ) {}
 
   @Post()
-  async notifyPayment(@Body() payment: { id: number; payment: any }): Promise<void> {
-    
-    const job = await this.queue.add('payment-notification', payment);
+  async notifyPayment(@Body() payment: PaymentData): Promise<string | null> { // Cambia el tipo de retorno a string o null
+    let attempts = 0;
+    let hash: string | null = null;
+    let response: any
 
-    while (true) {
-      const result = await job.finished();
+    // Realiza un bucle hasta que se obtenga una respuesta exitosa o se alcance un número máximo de intentos
+    while (attempts < 5 && hash === null) {
+      const isPaymentSuccessful = await this.bncPaymentService.processPayment(payment);
 
-      if (result.success) {
-        // Notificación exitosa, no se requiere reintento
-        break;
+      if (isPaymentSuccessful) {
+        // Si el pago es exitoso, calcula el hash y rompe el bucle
+        response = isPaymentSuccessful
       } else {
-        // Error en la notificación, se reintentará
-        console.error(`Error al notificar el pago: ${result.error}`);
-        await job.retry();
+        // Si el pago falla, incrementa el número de intentos
+        attempts++;
+        console.error(`El pago ha fallado, intento número ${attempts}`);
+        // Puedes manejar el reintentar el pago aquí si es necesario
       }
     }
+
+    // Devuelve el hash si se ha obtenido, de lo contrario, devuelve null
+    return response;
   }
 }
