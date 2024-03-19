@@ -32,6 +32,6 @@ import { PrismaModule } from './prisma/prisma.module';
     },
     NoFlightsAvailableException,
   ],
-  controllers: [],
+  controllers: [UserController],
 })
 export class AppModule {}
