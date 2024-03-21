@@ -25,6 +25,7 @@ export class AirAvailService {
     try {
       const response = await axios.post('https://ssl00.kiusys.com/ws3/index.php', data.toString(), { headers });
       const jsonResponse = await this.parseToJson.parseXmlToJson(response.data);
+      
       return  jsonResponse 
     } catch (error) {
       throw new Error('Error al enviar la solicitud al servicio web');

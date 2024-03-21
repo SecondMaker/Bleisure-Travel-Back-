@@ -1,13 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
+import axios, { AxiosResponse } from 'axios';
+import { ConfigService } from '@nestjs/config';
+import { KeyUpdateService } from '../../../schedule/updateKey'
 
 @Injectable()
 export class BNCPaymentService {
   private attempts: number = 0;
-  private readonly aesKey: string = 'mySecretKey'; // Clave secreta para AES
-  private readonly clientGUID: string = '4A074C46-DD4E-4E54-8010-B80A6A8758F4'; // Constante para ClientGUID
+  private urlBase: string = '';
+  private clientGUID: string;
 
-  async processPayment(paymentData: any): Promise<{ ClientGUID: string; Reference: string; Value: string; Validation: string; swTestOperation: boolean } | null> {
+  constructor(private config: ConfigService, private keyService : KeyUpdateService) {
+    this.clientGUID = this.config.get('CLIENT_GUI');
+    this.urlBase = this.config.get('URL_BNC')
+  }
+
+  async processPayment(
+    paymentData: any,
+  ): Promise<{
+    ClientGUID: string;
+    Reference: string;
+    Value: string;
+    Validation: string;
+    swTestOperation: boolean;
+  } | null> {
+
     this.attempts++;
     if (this.attempts < 5) {
       // Simula una respuesta fallida
@@ -19,9 +36,6 @@ export class BNCPaymentService {
       const validation = this.calculateSHA256(JSON.stringify(paymentData));
       const value = this.encryptAES(JSON.stringify(paymentData));
 
-      console.log('Hash SHA256:', validation); // Imprime el hash en la consola
-      console.log('Texto cifrado con AES:', value); // Imprime el texto cifrado con AES en la consola
-      
       return {
         ClientGUID: this.clientGUID,
         Reference: '',
@@ -32,6 +46,7 @@ export class BNCPaymentService {
     }
   }
 
+
   // Función para calcular el hash SHA256 de una cadena
   private calculateSHA256(input: string): string {
     const hash = crypto.createHash('sha256');
@@ -41,12 +56,10 @@ export class BNCPaymentService {
 
   // Función para cifrar datos utilizando AES
   private encryptAES(data: string): string {
-    const cipher = crypto.createCipher('aes-256-cbc', this.aesKey);
+    const key = this.keyService.getAESKey()
+    const cipher = crypto.createCipher('aes-256-cbc', key);
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
     return encrypted;
   }
-
-
-
 }

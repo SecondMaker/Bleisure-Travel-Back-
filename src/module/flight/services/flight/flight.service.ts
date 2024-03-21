@@ -59,6 +59,7 @@ export class FlightService {
     chd: number,
     inf: number
   ): Promise<any[]> {
+
     const formattedInfo = [];
   
     for (const originDestOption of originDestOptions) {
