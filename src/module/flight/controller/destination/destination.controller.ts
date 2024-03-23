@@ -65,6 +65,7 @@ export class DestinationController {
                 country: route.DepartureCountryName,
                 code: route.DepartureCountry,
                 locationName: route.DepartureLocationName,
+                city: route.departureCity
               });
             }
 
@@ -74,6 +75,7 @@ export class DestinationController {
                 country: route.ArrivalCountryName,
                 code: route.ArrivalCountry,
                 locationName: route.ArrivalLocationName,
+                city: route.arrivalCity
               });
             }
 

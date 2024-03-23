@@ -144,11 +144,13 @@ export class FlightService {
       const departureCountryName = departureInfo.CountryName[0];
       const departureLocationName = departureInfo.LocationName[0];
       const departureLocationCity = departureInfo.LocationCode[0]._;
+      const departureCity = departureInfo.LocationCityName[0]
       
       const arrivalCountry = arrivalInfo.Country[0];
       const arrivalCountryName = arrivalInfo.CountryName[0];
       const arrivalLocationName = arrivalInfo.LocationName[0];
       const arrivalLocationCity = arrivalInfo.LocationCode[0]._;
+      const arrivalCity = arrivalInfo.LocationCityName[0]
 
       const flightId= departureInfo.LocationCode[0]._+arrivalInfo.LocationCode[0]._
   
@@ -158,11 +160,12 @@ export class FlightService {
         DepartureCountry: departureCountry,
         DepartureLocationName: departureLocationName,
         IATAdestination: departureLocationCity,
-
+        departureCity: departureCity ,
         ArrivalCountryName: arrivalCountryName,
         ArrivalCountry: arrivalCountry,
         ArrivalLocationName: arrivalLocationName,
         IATAarrival: arrivalLocationCity,
+        arrivalCity: arrivalCity
       };
     });
     
