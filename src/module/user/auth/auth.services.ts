@@ -20,6 +20,7 @@ export class AuthServices {
         if(isEmpty(dto.type)){
             dto.type = "client";
         } 
+
         //guardar usuario
         try {
             const user = await this.prisma.user.create({
@@ -33,6 +34,7 @@ export class AuthServices {
                     name: dto.name,
                     type: dto.type,
                     gender : dto.gender,
+                    phone: dto.phone,
                     date_of_birth: dto.date_of_birth,
                     userId : user.id
                 }

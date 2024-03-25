@@ -34,7 +34,7 @@ model Info_clientes {
   type String @default("client")
   gender String?
   date_of_birth String?
-  phone Int?
+  phone String?
 
   userId Int @unique
   user User @relation(fields:[userId], references: [id])

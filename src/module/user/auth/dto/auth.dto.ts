@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, IsInt} from "class-validator"
+import { IsEmail, IsNotEmpty, IsString, IsInt, Allow} from "class-validator"
 
 
 export class AuthDto {
@@ -17,13 +17,15 @@ export class AuthDto {
     @IsString()
     type: string
 
+    @Allow()
     gender: string
+
+    @Allow()
+    phone: string
 
     @IsNotEmpty()
     date_of_birth: string
 
-  /* @IsInt()
-    phone: string */
 }
 
 export class LoginDto {
