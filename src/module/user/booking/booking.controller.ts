@@ -14,8 +14,6 @@ export class BookingController
 
     @Post('save')
     
-
-
     save(
         @Body() dto: BookingDto, @Req() req: any
         ){

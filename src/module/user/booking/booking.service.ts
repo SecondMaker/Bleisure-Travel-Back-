@@ -18,11 +18,15 @@ export class BookingService {
 
         //guardar reserva
         try {
-            const user = await this.prisma.bookings.create({
+            const user = await this.prisma.bookings.create({         
                 data : {
                     codigo_reserva: dto.codigo_reserva,
                     status: dto.status,
                     email: req.user.email,
+                    montoTotal : dto.montoTotal,
+                    montoAbonado : dto.montoAbonado,
+                    codigoTicket : dto.codigoTicket,
+                    userId: req.user.sub
                 }
             });
 

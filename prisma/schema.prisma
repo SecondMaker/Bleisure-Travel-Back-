@@ -15,6 +15,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   info Info_clientes?
+  bookings Bookings[]
 
   email String @unique
   hash String
@@ -45,4 +46,11 @@ model Bookings {
   codigo_reserva String
   status String 
   email String
+  montoTotal String
+  montoAbonado String
+  codigoTicket String
+  
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
 }

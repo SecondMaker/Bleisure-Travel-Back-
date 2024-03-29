@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, IsInt} from "class-validator"
+import { IsEmail, IsNotEmpty, IsString, IsInt, Allow} from "class-validator"
 
 
 export class BookingDto {
@@ -9,5 +9,14 @@ export class BookingDto {
 
     @IsNotEmpty()
     status: string
+
+    @Allow()
+    montoTotal: string
+
+    @Allow()
+    montoAbonado: string
+
+    @Allow()
+    codigoTicket: string
 
 }
