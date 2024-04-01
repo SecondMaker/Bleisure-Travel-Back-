@@ -45,4 +45,22 @@ export class BookingService {
         
     }
 
+    async Bookinglist(@Req() req: any){
+
+        const Bookings_list = await this.prisma.bookings.findMany();
+
+        return Bookings_list;
+
+    }
+
+    async BookinglistClient(@Req() req: any){
+
+        const Bookings_list_client = await this.prisma.bookings.findMany({
+            where: { userId: req.user.sub },
+        });
+
+        return Bookings_list_client;
+        
+    }
+
 }

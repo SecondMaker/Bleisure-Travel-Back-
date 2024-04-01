@@ -6,11 +6,12 @@ import { BookingService } from "./booking/booking.service";
 import { PrismaModule } from "src/prisma/prisma.module";
 import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "./auth/strategy";
+import { UserController } from "./user/user.controller";
 
 @Module({
 
     imports : [PrismaModule, JwtModule.register({})],
-    controllers : [AuthController, BookingController ], 
+    controllers : [AuthController, BookingController, UserController ], 
     providers : [AuthServices, JwtStrategy, BookingService ],
 })
 

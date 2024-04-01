@@ -10,14 +10,31 @@ import { JwtStrategy } from '../auth/strategy';
 export class BookingController 
 {
     constructor(private bookingService: BookingService, ){}
-    @UseGuards(AuthGuard('jwt'))
 
+    @UseGuards(AuthGuard('jwt'))
     @Post('save')
     
     save(
         @Body() dto: BookingDto, @Req() req: any
         ){
         return this.bookingService.save(dto, req);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('list')
+
+    list(@Req() req: any){
+
+        return this.bookingService.Bookinglist(req);
+
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('Clientlist')
+    Clientlist(@Req() req: any){
+
+        return this.bookingService.BookinglistClient(req);
+
     }
 
     
