@@ -8,6 +8,8 @@ import { ConfigService } from "@nestjs/config";
 import { User } from "@prisma/client";
 import { type } from "os";
 import { BookingDto } from './dto/booking.dto';
+import { TicketDto } from "./dto";
+import { error } from "console";
 
 @Injectable({})
 export class BookingService {
@@ -60,6 +62,23 @@ export class BookingService {
         });
 
         return Bookings_list_client;
+        
+    }
+
+    async BookingUpdate(dto: TicketDto, req ){
+
+        
+        const Bookings_ticket = await this.prisma.bookings.update({
+            where: {  codigo_reserva: dto.codigo_reserva, },
+            data: {
+                status: dto.status,
+                montoTotal : dto.montoTotal,
+                montoAbonado : dto.montoAbonado,
+                codigoTicket : dto.codigoTicket,
+              },
+        });
+
+        return Bookings_ticket;
         
     }
 

@@ -1,17 +1,18 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { get } from 'http';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { BookingDto } from './dto/booking.dto';
+import { TicketDto } from './dto/ticket.dto';
 import { BookingService } from './booking.service';
 import { JwtStrategy } from '../auth/strategy';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('booking')
 export class BookingController 
 {
     constructor(private bookingService: BookingService, ){}
 
-    @UseGuards(AuthGuard('jwt'))
     @Post('save')
     
     save(
@@ -20,7 +21,6 @@ export class BookingController
         return this.bookingService.save(dto, req);
     }
 
-    @UseGuards(AuthGuard('jwt'))
     @Get('list')
 
     list(@Req() req: any){
@@ -29,11 +29,18 @@ export class BookingController
 
     }
 
-    @UseGuards(AuthGuard('jwt'))
     @Get('Clientlist')
     Clientlist(@Req() req: any){
 
         return this.bookingService.BookinglistClient(req);
+
+    }
+
+    @Patch('UpdateTicket')
+    UpdateTicket(
+        @Body() dto: TicketDto, @Req() req: any){
+
+        return this.bookingService.BookingUpdate(dto, req);
 
     }
 

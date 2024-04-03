@@ -43,7 +43,7 @@ model Info_clientes {
 
 model Bookings {
   id Int @id @default(autoincrement())
-  codigo_reserva String
+  codigo_reserva String @unique
   status String 
   email String
   montoTotal String
