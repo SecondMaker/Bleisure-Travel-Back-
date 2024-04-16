@@ -83,7 +83,7 @@ export class AuthServices {
         userId: number,
         email: string,
 
-    ): Promise <{access_token: string, tipo: string}> {
+    ): Promise <{type: string, name: string, mail:string, id: number, access_token: string}> {
         const payload = {
             sub: userId,
             email
@@ -101,9 +101,11 @@ export class AuthServices {
             expiresIn: '15m',
             secret: secret
         });
-
         return {
-            tipo: type_user.type,
+            type: type_user.type,
+            name: type_user.name,
+            mail: email,
+            id: type_user.id,
             access_token : token,
         }
     }
