@@ -37,7 +37,7 @@ import { TestRedisController } from './test-redis/test-redis.controller';
     BatchController,
     DestinationController,
     BookController,
-    TicketController
+    TicketController,
   ],
   providers: [
     AirAvailService,
@@ -48,7 +48,7 @@ import { TestRedisController } from './test-redis/test-redis.controller';
     destinationService,
     AirBookService,
     AirTicketService,
-    AirPriceReservationService
+    AirPriceReservationService,
   ],
 })
 export class FlightModule {}

@@ -12,11 +12,11 @@ export class KeyUpdateService implements OnModuleInit {
   private urlBase: string = '';
 
   private cronJob: cron.CronJob<CronJobTick>;
-  
+
   constructor(private config: ConfigService) {
-    this.urlBase = this.config.get('URL_BNC')
+    this.urlBase = this.config.get('URL_BNC');
   }
-  
+
   getAESKey(): string {
     return this.aesKey;
   }
@@ -26,11 +26,11 @@ export class KeyUpdateService implements OnModuleInit {
     await this.updateAESKey();
     // Crear un nuevo CronJob para la actualización diaria
     this.cronJob = new cron.CronJob(
-        '00 20 16 * * *', 
-        this.handleKeyUpdate.bind(this), 
-        null, 
-        true, 
-      );
+      '00 20 16 * * *',
+      this.handleKeyUpdate.bind(this),
+      null,
+      true,
+    );
   }
   private async handleKeyUpdate() {
     await this.updateAESKey();
@@ -47,18 +47,17 @@ export class KeyUpdateService implements OnModuleInit {
         this.aesKey = 'test_Key';
       } else {
         // Lógica normal para obtener la clave desde el servicio externo
-        const response = await axios.post(
-          `${this.urlBase}/Api/Auth/LogOn`,
-          {
-            "ClientGUID": this.config.get('CLIENT_GUI'),
-            "Reference": "",
-            "Value": { "ClientGUID": this.config.get('CLIENT_GUI')},
-            "Validation": this.calculateSHA256(this.config.get('CLIENT_GUI')),
-            "swTestOperation": false
-          },
-        );
+        const response = await axios.post(`${this.urlBase}/Api/Auth/LogOn`, {
+          ClientGUID: this.config.get('CLIENT_GUI'),
+          Reference: '',
+          Value: { ClientGUID: this.config.get('CLIENT_GUI') },
+          Validation: this.calculateSHA256(this.config.get('CLIENT_GUI')),
+          swTestOperation: false,
+        });
         const workingKey =
-          response.data && response.data.value && response.data.value.WorkingKey;
+          response.data &&
+          response.data.value &&
+          response.data.value.WorkingKey;
         if (workingKey) {
           this.aesKey = workingKey;
         } else {
@@ -73,12 +72,11 @@ export class KeyUpdateService implements OnModuleInit {
       );
     }
 
-    console.log('Key Actualizada',currentTime, ' :::: ',this.aesKey)
+    console.log('Key Actualizada', currentTime, ' :::: ', this.aesKey);
   }
   private calculateSHA256(input: string): string {
     const hash = crypto.createHash('sha256');
     hash.update(input);
     return hash.digest('hex');
   }
-
 }

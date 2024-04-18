@@ -25,8 +25,8 @@ export class SharedService {
   getTarget(): string {
     return this.configService.get<string>('TARGET');
   }
-    
-    getISOCountry(): string {
-      return this.configService.get<string>('ISOCOUNTRY')
-  }  
+
+  getISOCountry(): string {
+    return this.configService.get<string>('ISOCOUNTRY');
+  }
 }

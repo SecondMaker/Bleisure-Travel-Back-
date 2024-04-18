@@ -1,22 +1,18 @@
-import { IsEmail, IsNotEmpty, IsString, IsInt, Allow} from "class-validator"
-
+import { IsEmail, IsNotEmpty, IsString, IsInt, Allow } from 'class-validator';
 
 export class BookingDto {
-    
-    @IsNotEmpty()
-    codigo_reserva: string
+  @IsNotEmpty()
+  codigo_reserva: string;
 
+  @IsNotEmpty()
+  status: string;
 
-    @IsNotEmpty()
-    status: string
+  @Allow()
+  montoTotal: string;
 
-    @Allow()
-    montoTotal: string
+  @Allow()
+  montoAbonado: string;
 
-    @Allow()
-    montoAbonado: string
-
-    @Allow()
-    codigoTicket: string
-
+  @Allow()
+  codigoTicket: string;
 }

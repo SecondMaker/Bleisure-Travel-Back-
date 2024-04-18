@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {PaymentNotificationController } from './payment.controller';
+import { PaymentNotificationController } from './payment.controller';
 
 describe('PaymentController', () => {
   let controller: PaymentNotificationController;
@@ -9,7 +9,9 @@ describe('PaymentController', () => {
       controllers: [PaymentNotificationController],
     }).compile();
 
-    controller = module.get<PaymentNotificationController>(PaymentNotificationController);
+    controller = module.get<PaymentNotificationController>(
+      PaymentNotificationController,
+    );
   });
 
   it('should be defined', () => {

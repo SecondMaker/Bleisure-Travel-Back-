@@ -26,7 +26,7 @@ import { Redis } from 'ioredis';
 @Controller('destinations')
 export class DestinationController {
   constructor(
-   // @Inject('REDIS_CONNECTION') private readonly redisClient: Redis,
+    // @Inject('REDIS_CONNECTION') private readonly redisClient: Redis,
     private readonly destinationService: destinationService,
     private readonly flightService: FlightService,
   ) {}
@@ -34,7 +34,7 @@ export class DestinationController {
   @Get()
   async getAllRoutes(): Promise<any> {
     const key = 'list-destinations';
-    const existingData = false//await this.redisClient.get(key);
+    const existingData = false; //await this.redisClient.get(key);
 
     if (existingData) {
       return JSON.stringify(existingData);
@@ -53,7 +53,6 @@ export class DestinationController {
           const routes = await this.flightService.formatFlightFromDestinations(
             await formattedResponse,
           );
-        
 
           for (const route of routes) {
             const departureIATA = route.IATAdestination;
@@ -65,7 +64,7 @@ export class DestinationController {
                 country: route.DepartureCountryName,
                 code: route.DepartureCountry,
                 locationName: route.DepartureLocationName,
-                city: route.departureCity
+                city: route.departureCity,
               });
             }
 
@@ -75,7 +74,7 @@ export class DestinationController {
                 country: route.ArrivalCountryName,
                 code: route.ArrivalCountry,
                 locationName: route.ArrivalLocationName,
-                city: route.arrivalCity
+                city: route.arrivalCity,
               });
             }
 
@@ -93,7 +92,7 @@ export class DestinationController {
     const destinos = Array.from(airportsData.values());
     const routesList = Array.from(routesSet);
 
-    const origenDestino = [origenes, destinos, routesList]  ;
+    const origenDestino = [origenes, destinos, routesList];
 
     return origenDestino;
   }

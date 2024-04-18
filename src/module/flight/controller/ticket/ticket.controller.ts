@@ -16,33 +16,29 @@ export class TicketController {
       const priceResponse = await this.airPriceReservation.generateAndSendXml(
         reservationData.reservationID,
       );
-      const success = await this.validatePriceResponse(priceResponse)
+      const success = await this.validatePriceResponse(priceResponse);
       if (success) {
         //llama al servicio que genera el ticket..
         const ticketResponse = await this.airTicketService.generateAndSendXml(
           reservationData.reservationID,
-          reservationData.MarketingAirline
-        )
-        return ticketResponse
-
-      } else { 
-        const Error = await this.getErrorPrice(priceResponse)
-        return  Error
-      } 
-    } catch (error) {
-      
-      
-    }
+          reservationData.MarketingAirline,
+        );
+        return ticketResponse;
+      } else {
+        const Error = await this.getErrorPrice(priceResponse);
+        return Error;
+      }
+    } catch (error) {}
   }
   async validatePriceResponse(priceResponse: any) {
-    const KIUrs= priceResponse.KIU_AirPriceRS
+    const KIUrs = priceResponse.KIU_AirPriceRS;
     if (KIUrs.Success == undefined) {
-      return false
+      return false;
     } else {
-      return true
+      return true;
     }
   }
   async getErrorPrice(priceResponse: any) {
-    return priceResponse.KIU_AirPriceRS.Error[0]
+    return priceResponse.KIU_AirPriceRS.Error[0];
   }
 }

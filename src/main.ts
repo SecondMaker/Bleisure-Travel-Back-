@@ -9,23 +9,26 @@ require('dotenv').config();
 
 async function bootstrap() {
   const server = express();
-  const allowedOrigins = ['http://localhost:3000', 'http://137.184.247.54', 'https://squid-app-84uyu.ondigitalocean.app'];
-  const app = await NestFactory.create(
-    AppModule,
-    new ExpressAdapter(server)
-  );
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'http://137.184.247.54',
+    'https://squid-app-84uyu.ondigitalocean.app',
+  ];
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
   // Agrega esta línea para habilitar CORS
-    app.use(cors({
+  app.use(
+    cors({
       origin: allowedOrigins,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
-    }));
+    }),
+  );
   app.useGlobalFilters(new CustomExceptionFilter());
-  app.useGlobalPipes(new ValidationPipe
-    ({
+  app.useGlobalPipes(
+    new ValidationPipe({
       whitelist: true,
     }),
-    );
+  );
   await app.listen(8090);
 }
 bootstrap();

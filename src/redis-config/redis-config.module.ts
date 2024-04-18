@@ -7,7 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   providers: [
     {
       provide: 'REDIS_CONNECTION',
-      
+
       useFactory: (configService: ConfigService) => {
         if (configService.get<string>('PROD')) {
           console.log('on production!');

@@ -12,18 +12,21 @@ export class PaymentNotificationController {
   ) {}
 
   @Post()
-  async notifyPayment(@Body() payment: PaymentData): Promise<string | null> { // Cambia el tipo de retorno a string o null
+  async notifyPayment(@Body() payment: PaymentData): Promise<string | null> {
+    // Cambia el tipo de retorno a string o null
     let attempts = 0;
     let hash: string | null = null;
-    let response: any
+    let response: any;
 
     // Realiza un bucle hasta que se obtenga una respuesta exitosa o se alcance un número máximo de intentos
     while (attempts < 5 && hash === null) {
-      const isPaymentSuccessful = await this.bncPaymentService.processPayment(payment);
+      const isPaymentSuccessful = await this.bncPaymentService.processPayment(
+        payment,
+      );
 
       if (isPaymentSuccessful) {
         // Si el pago es exitoso, calcula el hash y rompe el bucle
-        response = isPaymentSuccessful
+        response = isPaymentSuccessful;
       } else {
         // Si el pago falla, incrementa el número de intentos
         attempts++;

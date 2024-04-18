@@ -3,7 +3,7 @@ import { Redis } from 'ioredis';
 
 @Controller()
 export class TestRedisController {
- // constructor(@Inject('REDIS_CONNECTION') private readonly redisClient: Redis) {}
+  // constructor(@Inject('REDIS_CONNECTION') private readonly redisClient: Redis) {}
 
   @Post('save-to-redis')
   async saveToRedis(

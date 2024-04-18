@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 import axios, { AxiosResponse } from 'axios';
 import { ConfigService } from '@nestjs/config';
-import { KeyUpdateService } from '../../../schedule/updateKey'
+import { KeyUpdateService } from '../../../schedule/updateKey';
 
 @Injectable()
 export class BNCPaymentService {
@@ -10,21 +10,21 @@ export class BNCPaymentService {
   private urlBase: string = '';
   private clientGUID: string;
 
-  constructor(private config: ConfigService, private keyService : KeyUpdateService) {
+  constructor(
+    private config: ConfigService,
+    private keyService: KeyUpdateService,
+  ) {
     this.clientGUID = this.config.get('CLIENT_GUI');
-    this.urlBase = this.config.get('URL_BNC')
+    this.urlBase = this.config.get('URL_BNC');
   }
 
-  async processPayment(
-    paymentData: any,
-  ): Promise<{
+  async processPayment(paymentData: any): Promise<{
     ClientGUID: string;
     Reference: string;
     Value: string;
     Validation: string;
     swTestOperation: boolean;
   } | null> {
-
     this.attempts++;
     if (this.attempts < 5) {
       // Simula una respuesta fallida
@@ -46,7 +46,6 @@ export class BNCPaymentService {
     }
   }
 
-
   // Función para calcular el hash SHA256 de una cadena
   private calculateSHA256(input: string): string {
     const hash = crypto.createHash('sha256');
@@ -56,7 +55,7 @@ export class BNCPaymentService {
 
   // Función para cifrar datos utilizando AES
   private encryptAES(data: string): string {
-    const key = this.keyService.getAESKey()
+    const key = this.keyService.getAESKey();
     const cipher = crypto.createCipher('aes-256-cbc', key);
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');

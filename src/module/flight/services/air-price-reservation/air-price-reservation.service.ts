@@ -34,8 +34,8 @@ export class AirPriceReservationService {
     data.append('password', password);
     data.append('request', xml);
 
-      try {
-        console.log(xml)
+    try {
+      console.log(xml);
       const response = await axios.post(
         'https://ssl00.kiusys.com/ws3/index.php',
         data.toString(),

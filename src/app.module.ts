@@ -13,8 +13,8 @@ import { NoFlightsAvailableException } from './filters/execption/no-flights-avai
 
 //import { RedisModule } from './redis-config/redis-config.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { KeyUpdateService } from './schedule/updateKey'
-import { ScheduleModule } from '@nestjs/schedule'; 
+import { KeyUpdateService } from './schedule/updateKey';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -37,7 +37,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       useClass: CustomExceptionFilter,
     },
     NoFlightsAvailableException,
-    KeyUpdateService
+    KeyUpdateService,
   ],
   controllers: [],
 })

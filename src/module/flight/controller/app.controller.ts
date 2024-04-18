@@ -16,7 +16,7 @@ import { FlightService } from '../services/flight/flight.service';
 @Controller()
 export class AppController {
   constructor(
-   // @Inject('REDIS_CONNECTION') private readonly redisClient: Redis,
+    // @Inject('REDIS_CONNECTION') private readonly redisClient: Redis,
     private readonly airAvailService: AirAvailService,
     private readonly flightService: FlightService,
   ) {}
@@ -32,10 +32,10 @@ export class AppController {
     @Query('INF') inf: number,
   ): Promise<any> {
     const useRedis = process.env.USE_REDIS === 'true';
-    
+
     try {
       const key = `${fecha}-${origen}-${destino}`;
-      const existingData =  false //await this.redisClient.get(key);
+      const existingData = false; //await this.redisClient.get(key);
 
       if (existingData && useRedis) {
         // Si la clave ya existe, devuelve los datos existentes
@@ -49,12 +49,18 @@ export class AppController {
           cant: cant,
           adt: adt,
           chd: chd,
-          inf: inf
+          inf: inf,
         });
 
-        const formattedInfo = await this.validateResponse(jsonResponse, cant, adt, chd, inf);
+        const formattedInfo = await this.validateResponse(
+          jsonResponse,
+          cant,
+          adt,
+          chd,
+          inf,
+        );
         //if (useRedis) await this.redisClient.set(key, JSON.stringify(formattedInfo));
-        
+
         return formattedInfo;
       }
     } catch (error) {
@@ -76,7 +82,7 @@ export class AppController {
     PassengerQuantity: number,
     adt: number,
     chd: number,
-    inf: number
+    inf: number,
   ): Promise<any> {
     const originDestInfo =
       jsonResponse.KIU_AirAvailRS.OriginDestinationInformation[0];
@@ -97,7 +103,9 @@ export class AppController {
         this.flightService.formatBookingClassAvailAndFlightInfo(
           originDestOptions,
           PassengerQuantity,
-          adt, chd, inf
+          adt,
+          chd,
+          inf,
         );
 
       return formattedInfo;

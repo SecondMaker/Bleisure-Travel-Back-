@@ -19,9 +19,7 @@ export class AirBookService {
     const ISOCountry = this.sharedService.getISOCountry();
     const currentDate = new Date();
     currentDate.setHours(currentDate.getHours() + 24);
-    const TicketTimeLimit = currentDate
-      .toISOString()
-      .slice(0, 19);
+    const TicketTimeLimit = currentDate.toISOString().slice(0, 19);
 
     const xml = this.generateXml(
       bookData,
@@ -29,7 +27,7 @@ export class AirBookService {
       terminalID,
       target,
       ISOCountry,
-      TicketTimeLimit
+      TicketTimeLimit,
     ).trim();
 
     const headers = {
@@ -41,19 +39,17 @@ export class AirBookService {
     data.append('password', password);
     data.append('request', xml);
 
-
-     try {
+    try {
       const response = await axios.post(
         'https://ssl00.kiusys.com/ws3/index.php',
         data.toString(),
         { headers },
       );
-       const jsonResponse = await this.parseToJson.parseXmlToJson(response.data);
-       return jsonResponse
-     } catch (error) {
-       
+      const jsonResponse = await this.parseToJson.parseXmlToJson(response.data);
+      return jsonResponse;
+    } catch (error) {
       throw new Error('Error al enviar la solicitud al servicio web');
-    } 
+    }
   }
   formatDateTime(dateTime: string): string {
     // Convierte "2024-01-27 21:30:00" a "2024-01-27T21:30:00"
@@ -66,14 +62,14 @@ export class AirBookService {
     TerminalID: string,
     Target: string,
     ISOCountry: string,
-    TicketTimeLimit: string
+    TicketTimeLimit: string,
   ): string {
     const originDestinationOptionsXml = bookData.segmentFlight
       .map(
         (flight, index) => `
           <OriginDestinationOption>
               <FlightSegment DepartureDateTime="${this.formatDateTime(
-                flight.DepartureDateTime
+                flight.DepartureDateTime,
               )}" ResBookDesigCode="${
           flight.Prices[0].ResBookDesigCode
         }" SegmentRPH="${index + 1}" FlightNumber="${flight.FlightNumber}">
@@ -98,11 +94,13 @@ export class AirBookService {
           <MiddleName>O</MiddleName>
           <Surname>${passanger.lastname.toUpperCase()}</Surname>
         </PersonName>
-        <Document DocType="${passanger.identificationtype.toUpperCase()}" DocID="${passanger.identificationnumber}"/>
+        <Document DocType="${passanger.identificationtype.toUpperCase()}" DocID="${
+          passanger.identificationnumber
+        }"/>
         <Telephone CountryAccessCode="${bookData.contact.contactZoneCode.replace(
           /\D/g,
           '',
-          )}" AreaCityCode="424" PhoneNumber="${bookData.contact.contactNumber}"/>
+        )}" AreaCityCode="424" PhoneNumber="${bookData.contact.contactNumber}"/>
         <Email>${bookData.contact.contactEmail}</Email>
         <TravelerRefNumber RPH="1"/>
       </AirTraveler>

@@ -1,5 +1,5 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { AirBookService } from '../../services/air-book/air-book.service'
+import { AirBookService } from '../../services/air-book/air-book.service';
 
 interface FlightSegment {
   FlightNumber: string;
@@ -50,9 +50,7 @@ interface BookingData {
 
 @Controller('book')
 export class BookController {
-  constructor(
-    private readonly airBookService: AirBookService
-  ) {}
+  constructor(private readonly airBookService: AirBookService) {}
 
   @Post()
   async createBook(@Body() bookData: BookingData): Promise<any> {
@@ -61,4 +59,3 @@ export class BookController {
     return jsonResponse;
   }
 }
-

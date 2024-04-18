@@ -35,12 +35,11 @@ export class ItinerariesController {
         cant: cant,
         adt: adt,
         chd: chd,
-        inf: inf
-
+        inf: inf,
       });
 
       //return this.validateResponse(jsonResponse);
-      return jsonResponse
+      return jsonResponse;
     } catch (error) {
       if (error instanceof NoFlightsAvailableException) {
         throw new HttpException(
