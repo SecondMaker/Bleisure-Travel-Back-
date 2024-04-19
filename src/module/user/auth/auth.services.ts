@@ -100,6 +100,6 @@ export class AuthServices {
       expiresIn: '15m',
       secret: secret,
     });
-    return token;
+    return { access_token: token };
   }
 }
