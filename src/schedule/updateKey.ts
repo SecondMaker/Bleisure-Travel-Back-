@@ -44,7 +44,7 @@ export class KeyUpdateService implements OnModuleInit {
       const isTestMode = this.config.get<boolean>('TEST_MODE', false);
       if (isTestMode) {
         // Si estamos en modo de prueba, establece la clave de prueba
-        this.aesKey = 'test_Key';
+        this.aesKey = '0c9a957847e643f7a4b895a6eee38c5e';
       } else {
         // Lógica normal para obtener la clave desde el servicio externo
         const response = await axios.post(`${this.urlBase}/Api/Auth/LogOn`, {

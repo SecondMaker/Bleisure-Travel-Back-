@@ -5,7 +5,7 @@ import { PaymentNotificationController } from './controller/payment/payment.cont
 import { BncLoginOnController } from './controller/bnc-login-on/bnc-login-on.controller';
 import { BNCPaymentService } from './services/bnc.service';
 import { KeyUpdateService } from '../../schedule/updateKey';
-
+import { Cypher } from './services/cypherData';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -14,6 +14,6 @@ import { KeyUpdateService } from '../../schedule/updateKey';
     }),
   ],
   controllers: [PaymentNotificationController, BncLoginOnController],
-  providers: [BNCPaymentService, KeyUpdateService],
+  providers: [BNCPaymentService, KeyUpdateService, Cypher],
 })
 export class PaymentModule {}

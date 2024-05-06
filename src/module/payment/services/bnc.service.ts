@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import * as crypto from 'crypto';
 import axios, { AxiosResponse } from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { KeyUpdateService } from '../../../schedule/updateKey';
+import { Cypher } from './cypherData';
 
 @Injectable()
 export class BNCPaymentService {
@@ -12,19 +12,28 @@ export class BNCPaymentService {
 
   constructor(
     private config: ConfigService,
-    private keyService: KeyUpdateService,
+    private cypher: Cypher
   ) {
     this.clientGUID = this.config.get('CLIENT_GUI');
     this.urlBase = this.config.get('URL_BNC');
   }
+  
+ async testServices(data: any): Promise<any> {
+  
+  const validation = this.cypher.calculateSHA256(JSON.stringify(this.clientGUID));
 
-  async processPayment(paymentData: any): Promise<{
-    ClientGUID: string;
-    Reference: string;
-    Value: string;
-    Validation: string;
-    swTestOperation: boolean;
-  } | null> {
+  const send = {
+    ClientGUID: this.clientGUID,
+    Reference: '',
+    Value: {"ClientGUID":this.clientGUID},
+    Validation: validation,
+    swTestOperation: false,
+  }
+  
+  return send
+ }
+
+  async processPayment(paymentData: any): Promise<any> {
     this.attempts++;
     if (this.attempts < 5) {
       // Simula una respuesta fallida
@@ -33,32 +42,31 @@ export class BNCPaymentService {
       // En la quinta vez, simula una respuesta exitosa y devuelve el hash SHA256 y el texto cifrado con AES
       this.attempts = 0; // Reinicia los intentos para futuros pagos
 
-      const validation = this.calculateSHA256(JSON.stringify(paymentData));
-      const value = this.encryptAES(JSON.stringify(paymentData));
+      const validation = this.cypher.calculateSHA256(JSON.stringify(paymentData));
+      const value = this.cypher.encryptAES(JSON.stringify(paymentData));
 
-      return {
+      const data = {
         ClientGUID: this.clientGUID,
         Reference: '',
         Value: value,
         Validation: validation,
         swTestOperation: false,
-      };
+      }
+      
+      return data
+
+     // return await axios.post(`${this.urlBase}/Api/Auth/LogOn`, data );
+     /* try {
+        const response = await axios.post(
+          `${this.urlBase}/Api/Position/ValidateP2P`,
+          data
+        );
+          
+        return response;
+      } catch (error) {
+        throw new Error(error);
+      }
+        */
     }
-  }
-
-  // Función para calcular el hash SHA256 de una cadena
-  private calculateSHA256(input: string): string {
-    const hash = crypto.createHash('sha256');
-    hash.update(input);
-    return hash.digest('hex');
-  }
-
-  // Función para cifrar datos utilizando AES
-  private encryptAES(data: string): string {
-    const key = this.keyService.getAESKey();
-    const cipher = crypto.createCipher('aes-256-cbc', key);
-    let encrypted = cipher.update(data, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return encrypted;
   }
 }

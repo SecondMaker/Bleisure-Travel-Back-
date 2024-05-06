@@ -38,4 +38,15 @@ export class PaymentNotificationController {
     // Devuelve el hash si se ha obtenido, de lo contrario, devuelve null
     return response;
   }
+
+  @Post('test')
+  async testBNC (@Body() payment: any) : Promise<string | null>{
+
+
+    const isPaymentSuccessful = await this.bncPaymentService.testServices(
+      payment
+    )
+
+    return isPaymentSuccessful
+  }
 }
