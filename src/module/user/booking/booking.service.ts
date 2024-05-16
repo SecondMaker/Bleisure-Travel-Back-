@@ -34,9 +34,13 @@ export class BookingService {
         },
       });
 
+      const bearer = req.headers.authorization
+      const token = bearer.slice(7)
+
       //devolver respuesta
       return {
         status: 'Guardado',
+        //token
       };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -49,7 +53,10 @@ export class BookingService {
   async Bookinglist(@Req() req: any) {
     const Bookings_list = await this.prisma.bookings.findMany();
 
-    return Bookings_list;
+    const bearer = req.headers.authorization
+    const token = bearer.slice(7)
+
+    return {Bookings_list, token}
   }
 
   async BookinglistClient(@Req() req: any) {
@@ -57,7 +64,10 @@ export class BookingService {
       where: { userId: req.user.sub },
     });
 
-    return Bookings_list_client;
+    const bearer = req.headers.authorization
+    const token = bearer.slice(7)
+
+    return {Bookings_list_client, token}
   }
 
   async BookingUpdate(dto: TicketDto, req) {
@@ -71,6 +81,12 @@ export class BookingService {
       },
     });
 
-    return Bookings_ticket;
+    const bearer = req.headers.authorization
+    const token = bearer.slice(7)
+    
+    return {
+      Bookings_ticket, token
+    }
   }
+
 }
