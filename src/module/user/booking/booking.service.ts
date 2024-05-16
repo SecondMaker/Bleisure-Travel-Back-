@@ -40,7 +40,7 @@ export class BookingService {
       //devolver respuesta
       return {
         status: 'Guardado',
-        //token
+        token
       };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
