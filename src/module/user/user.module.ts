@@ -7,10 +7,11 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './auth/strategy';
 import { UserController } from './user/user.controller';
+import { UploadController } from '../docs/excel.controller';
 
 @Module({
   imports: [PrismaModule, JwtModule.register({})],
-  controllers: [AuthController, BookingController, UserController],
+  controllers: [AuthController, BookingController, UserController, UploadController ],
   providers: [AuthServices, JwtStrategy, BookingService],
 })
 export class UserModule {}
