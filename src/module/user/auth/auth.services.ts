@@ -6,7 +6,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { isEmpty } from 'class-validator';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { LoginDto } from './dto/auth.dto';
+import { DeleteInfoDto, DeleteUserDto, LoginDto } from './dto/auth.dto';
 import { User } from '@prisma/client';
 import { type } from 'os';
 
@@ -102,4 +102,51 @@ export class AuthServices {
     });
     return { access_token: token };
   }
+
+  async UserDelete(dto: DeleteUserDto, req){
+    try {
+        const delete_user = await this.prisma.user.delete({
+          where:{
+            id: dto.id
+          },
+        });
+        
+
+        return {
+          status: 'Borrado'
+        }
+      }catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          throw new ForbiddenException('Error');
+        }
+        throw error;
+    }
+  }
+
+  async InfoDelete(dto: DeleteInfoDto, req){
+    try {
+        const delete_info = await this.prisma.info_clientes.delete({
+          where:{
+            id: dto.id
+          },
+        });
+
+        const delete_user = await this.prisma.user.delete({
+          where:{
+            id: dto.id
+          },
+        });
+
+        return {
+          status: 'Borrado'
+        }
+      }catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          throw new ForbiddenException('Error');
+        }
+        throw error;
+    }
+
+  }
+
 }

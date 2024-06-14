@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, IsInt, Allow } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsInt, Allow, isEmail } from 'class-validator';
 
 export class AuthDto {
   @IsEmail()
@@ -34,4 +34,16 @@ export class LoginDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+}
+
+export class DeleteUserDto{
+  @IsInt()
+  @IsNotEmpty()
+  id: number;
+}
+
+export class DeleteInfoDto{
+  @IsInt()
+  @IsNotEmpty()
+  id: number;
 }

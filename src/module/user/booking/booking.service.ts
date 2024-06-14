@@ -10,6 +10,7 @@ import { type } from 'os';
 import { BookingDto } from './dto/booking.dto';
 import { TicketDto } from './dto';
 import { error } from 'console';
+import { DeleteTicketDto } from './dto/delete.dto';
 
 @Injectable({})
 export class BookingService {
@@ -87,6 +88,26 @@ export class BookingService {
     return {
       Bookings_ticket, token
     }
+  }
+
+  async BookingDelete(dto: DeleteTicketDto, req){
+    try {
+        const delete_ticket = await this.prisma.bookings.delete({
+          where:{
+            codigo_reserva: dto.codigo_reserva
+          },
+        });
+
+        return {
+          status: 'Borrado'
+        }
+      }catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          throw new ForbiddenException('Error');
+        }
+        throw error;
+    }
+
   }
 
 }

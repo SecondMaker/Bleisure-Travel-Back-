@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Patch,
+  Delete,
   Post,
   Req,
   UseGuards,
@@ -14,6 +15,7 @@ import { BookingDto } from './dto/booking.dto';
 import { TicketDto } from './dto/ticket.dto';
 import { BookingService } from './booking.service';
 import { JwtStrategy } from '../auth/strategy';
+import { DeleteTicketDto } from './dto/delete.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('booking')
@@ -39,4 +41,10 @@ export class BookingController {
   UpdateTicket(@Body() dto: TicketDto, @Req() req: any) {
     return this.bookingService.BookingUpdate(dto, req);
   }
+
+  @Delete('DeleteTicket')
+  Deleteticket(@Body() dto: DeleteTicketDto, @Req() req: any){
+    return this.bookingService.BookingDelete(dto, req);
+  }
+  
 }
