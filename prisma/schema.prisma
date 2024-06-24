@@ -54,3 +54,15 @@ model Bookings {
   user   User @relation(fields: [userId], references: [id])
 
 }
+
+model ExcelDB {
+  id Int @id @default(autoincrement())
+  ruta String
+  aerolinea String
+  iata String
+  tarifa String
+  costo Float
+  clasificacion String
+  incluye String
+  condiciones String
+}
