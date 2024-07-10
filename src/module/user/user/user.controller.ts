@@ -24,7 +24,6 @@ export class UserController {
   async userList(@Req() req: any) {
     //Buscar lstado de usuarios
     const user_list = await this.prisma.info_clientes.findMany();
-
     return user_list;
   }
 }

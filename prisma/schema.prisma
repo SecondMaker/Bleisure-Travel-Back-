@@ -21,15 +21,10 @@ model User {
   hash String
 }
 
-model Permisos {
-  id Int @id @default(autoincrement())
-}
-
 model Info_clientes {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
 
   name String
   type String @default("client")
@@ -52,17 +47,16 @@ model Bookings {
   
   userId Int
   user   User @relation(fields: [userId], references: [id])
-
 }
 
 model ExcelDB {
   id Int @id @default(autoincrement())
-  ruta String
-  aerolinea String
   iata String
   tarifa String
-  costo Float
   clasificacion String
-  incluye String
-  condiciones String
+  destino String
+  equipaje_mano String
+  equipaje_bodega String
+  reembolso String
+  cambios String
 }

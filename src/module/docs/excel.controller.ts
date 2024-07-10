@@ -1,10 +1,11 @@
-import { Controller, Post, UseInterceptors, UploadedFile, ForbiddenException, Get, Req } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, ForbiddenException, Get, Req, Body } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PrismaClientKnownRequestError, empty } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ExcelService } from './excel.service';
 import * as XLSX from 'xlsx';
+import { ExcelDto } from './dto/excel.dto';
 
 @Controller('upload')
 export class UploadController {
@@ -20,29 +21,22 @@ export class UploadController {
       const workbook = XLSX.read(file.buffer, { type: 'buffer' });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const data = XLSX.utils.sheet_to_json(worksheet); 
-  /*  var ruta = data[0]["RUTA"];
-      var aerolinea = data[0]["AEROLINEA"]; 
-      var iata = data[0]["IATA"]; 
-      var tarifa = data[0]["TARIFA"]; 
-      var costo = data[0]["COSTO"];
-      var clasificacion = data[0]["CLASE"];
-      var incluye = data[0]["INCLUYE"];
-      var condiciones = data[0]["CONDICIONES"]; */
+      const exceldelete = await this.prisma.excelDB.deleteMany({})
       console.log(data[0])
       for (let i = 0; i < data.length; i++) {
           const save = await this.prisma.excelDB.create({
             data: {
-              ruta: data[i]["RUTA"],
-              aerolinea: data[i]["AEROLINEA"],
               iata: data[i]["IATA"], 
-              tarifa: data[i]["TARIFA"], 
-              costo: data[i]["COSTO"],
-              clasificacion: data[i]["CLASE"],
-              incluye: data[i]["INCLUYE"],
-              condiciones: data[i]["CONDICIONES"],
+              tarifa: data[i]["TARIFA"],
+              clasificacion: data[i]["CLASIFICACION"],
+              destino: data[i]["DESTINO"].toString(), 
+              equipaje_mano: data[i]["EQUIPAJE_MANO"],
+              equipaje_bodega: data[i]["EQUIPAJE_BODEGA"],
+              reembolso: data[i]["REEMBOLSABLE"],
+              cambios: data[i]["CAMBIOS"]
             },
           });
-      }
+      } 
     }catch(error){
       console.log(error)
       if (error instanceof PrismaClientKnownRequestError) {
