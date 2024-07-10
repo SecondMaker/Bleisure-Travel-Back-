@@ -16,7 +16,7 @@ export class UploadController {
 ){}
   @Post('excel')
   @UseInterceptors(FileInterceptor('file'))
-   async uploadFile(@UploadedFile() file) {
+  async uploadFile(@UploadedFile() file) {
     try{
       const workbook = XLSX.read(file.buffer, { type: 'buffer' });
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -43,6 +43,8 @@ export class UploadController {
         throw new ForbiddenException('Error');
       }
       throw error;
+    }return {
+      status : "Completado"
     }
   }
 
