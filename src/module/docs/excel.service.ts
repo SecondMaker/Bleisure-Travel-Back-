@@ -29,7 +29,14 @@ export class ExcelService{
 
 
     async ExcelData(@Req() req: any) {
-      const Bookings_list = await this.prisma.excelDB.findMany();
+      const Bookings_list = await this.prisma.excelDB.findMany({
+        select: {
+          iata: true,
+          tarifa: true,
+          clasificacion: true,
+          destino: true,
+        },
+    });
   
       const bearer = req.headers.authorization
       const token = bearer.slice(7)
