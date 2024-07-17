@@ -52,4 +52,9 @@ export class UploadController {
   list(@Req() req: any) {
     return this.ExcelService.search(req);
   }
+
+  @Get('todo')
+      excel(@Req() req: any) {
+    return this.ExcelService.ExcelData(req);
+  }
 }
