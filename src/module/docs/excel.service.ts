@@ -37,11 +37,8 @@ export class ExcelService{
           destino: true,
         },
     });
-  
-      const bearer = req.headers.authorization
-      const token = bearer.slice(7)
-  
-      return {Bookings_list, token}
+    
+      return {Bookings_list}
     }
 
 }
