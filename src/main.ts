@@ -13,6 +13,7 @@ async function bootstrap() {
     'http://localhost:3000',
     'http://137.184.247.54',
     'https://squid-app-84uyu.ondigitalocean.app',
+    'https://bleisure-travel.vercel.app'
   ];
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
   // Agrega esta línea para habilitar CORS
@@ -29,6 +30,6 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  await app.listen(8090);
+  await app.listen(8080);
 }
 bootstrap();
