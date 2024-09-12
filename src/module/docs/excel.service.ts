@@ -15,11 +15,12 @@ export class ExcelService{
     ){}
 
     async search(@Req() req: any){
-      const info_list = await this.prisma.excelDB.findFirst({
+      console.log(req.query)
+      const info_list = await this.prisma.excelDB.findFirst({     
         where: { 
-                 iata: req.body.iata,
-                 tarifa: req.body.tarifa,
-                 destino: req.body.destino,
+                 iata: req.query.iata,
+                 tarifa: req.query.tarifa,
+                 destino: req.query.destino,
                },      
       });
       return {
