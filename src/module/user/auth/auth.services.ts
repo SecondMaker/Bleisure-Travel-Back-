@@ -7,6 +7,8 @@ import { isEmpty } from 'class-validator';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { DeleteInfoDto, DeleteUserDto, LoginDto } from './dto/auth.dto';
+import SENDMAIL from 'src/module/mail/mail';
+import HTML_TEMPLATE from 'src/module/mail/template';
 import { User } from '@prisma/client';
 import { type } from 'os';
 
@@ -24,7 +26,6 @@ export class AuthServices {
     if (isEmpty(dto.type)) {
       dto.type = 'client';
     }
-
     //guardar usuario
     try {
       const user = await this.prisma.user.create({
@@ -43,6 +44,20 @@ export class AuthServices {
           userId: user.id,
         },
       });
+      //Enviar Correo
+          const message = "Haz click en este boton para verificar tu cuenta y asi poder acceder a Bleisure Travel" //El mensaje que ira dentro del HTML
+          const options = {
+          from: "email@bleitravel.com", // Correo desde el que se envia
+          to: dto.email, // Correo que recibe
+          subject: "Verifica tu correo en Bleisure Travel", // Asunto
+          text: message,
+          html: HTML_TEMPLATE(message),
+          }
+    
+          SENDMAIL(options, (info) => {
+            console.log("Email sent successfully");
+            console.log("MESSAGE ID: ", info.messageId);
+        });
       //devolver respuesta
       return {result: "success" };
     } catch (error) {
@@ -70,6 +85,22 @@ export class AuthServices {
     if (!pwMatches) {
       throw new ForbiddenException('Usuario incorrecto');
     }
+
+          //Prueba para enviar correo
+      /*  const message = "Hi there, you were emailed me through nodemailer" //El mensaje que ira dentro del HTML
+          const options = {
+          from: "email@bleitravel.com", // Correo desde el que se envia
+          to: "delahoz_ep@hotmail.com", // Correo que recibe
+          subject: "Send email in Node.JS with Nodemailer", // Asunto
+          text: message,
+          html: HTML_TEMPLATE(message),
+          }
+    
+          SENDMAIL(options, (info) => {
+            console.log("Email sent successfully");
+            console.log("MESSAGE ID: ", info.messageId);
+        }); */
+    
 
     const info_cliente = await this.prisma.info_clientes.findUnique({
       where: {
