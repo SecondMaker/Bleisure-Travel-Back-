@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
-});
+}); 
 
 /** Funcion reusable SENDMAIL
 @params {object} options - mail options (to, subject, text, html)
